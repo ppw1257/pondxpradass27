@@ -354,6 +354,7 @@
     .cp-pill { font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 0.5px solid #e0e0e0; color: #555; background: #f7f7f6; cursor: pointer; transition: background 0.15s, border-color 0.15s; user-select: none; }
     .cp-pill:hover { background: #eee; border-color: #bbb; }
     .cp-pill.copied { background: #111; color: #fff; border-color: #111; }
+    .cp-pill.mention { background: #fff; color: #111; border-color: #c8c8c8; }
     .cp-copy-all-btn { font-size: 12px; margin-top: 0.6rem; padding: 7px 14px; border-radius: 8px; background: transparent; color: #555; border: 0.5px solid #bbb; cursor: pointer; transition: background 0.15s; }
     .cp-copy-all-btn:hover { background: #f7f7f6; }
     .cp-gen-bar { margin-top: 1.2rem; border-top: 0.5px solid #e0e0e0; padding-top: 1rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; text-align: left; }
@@ -448,7 +449,7 @@
   </div>
 </div>
 
-<div class="platform-label" id="platformLabel">Instagram</div>
+<div class="platform-label" id="platformLabel" style="display:none">All Platforms</div>
 
 <div class="main-layout">
   <div id="focusedWrap" class="focused-wrap"></div>
@@ -488,6 +489,8 @@
       <div class="cp-hashtag-box">
         <p class="cp-hashtag-label">Instagram hashtags</p>
         <div class="cp-hashtag-pills">
+          <span class="cp-pill mention" onclick="cpCopyPill(this, '@ppnaravit')">@ppnaravit</span>
+          <span class="cp-pill mention" onclick="cpCopyPill(this, '@prada')">@prada</span>
           <span class="cp-pill" onclick="cpCopyPill(this, '#PradaSS27xPond')">#PradaSS27xPond</span>
           <span class="cp-pill" onclick="cpCopyPill(this, '#ppnaravit')">#ppnaravit</span>
           <span class="cp-pill" onclick="cpCopyPill(this, '#PradaSS27')">#PradaSS27</span>
@@ -1460,7 +1463,9 @@ function backToGrid() {
 function setPlatform(p) {
   currentPlatform = p;
   focusedIndex = null;
-  document.getElementById('platformLabel').textContent = platformNames[p];
+  const _pl=document.getElementById('platformLabel');
+  _pl.textContent = platformNames[p];
+  _pl.style.display = (p === 'all') ? 'none' : '';
   const tabAll = document.getElementById('tabAll');
   if (tabAll) tabAll.classList.toggle('active', p === 'all');
   const tabMap = { ig:'IG', twitter:'TW', fb:'FB', youtube:'YT', tiktok:'TK' };
@@ -1630,7 +1635,7 @@ let cpSelected = null;
 let cpBatchNum = 0;
 let cpGenerating = false;
 
-const CP_HASHTAGS = '#PradaSS27xPond #ppnaravit #PradaSS27 #Prada #PondNaravit';
+const CP_HASHTAGS = '@ppnaravit @prada #PradaSS27xPond #ppnaravit #PradaSS27 #Prada #PondNaravit';
 
 function cpUpdateStats(){
   const pc = document.getElementById('commentPoolCount');
