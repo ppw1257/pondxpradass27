@@ -1,2213 +1,523 @@
 <!doctype html>
-<html lang="th" class="h-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PondNaravit×PradaSS27 </title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Prada SS27 Comment Picker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --black: #111;
-      --offwhite: #f9f9f7;
-      --warm-white: #fafafa;
-      --gold: #9a7a4a;
-      --gold-light: #b8965a;
-      --muted: #999;
-      --border: rgba(0,0,0,0.08);
-      --card-bg: #fff;
-      --red: #d94f4f;
-      --green: #2d9e6b;
-      --card: #fff;
-      --font: 'Inter', system-ui, sans-serif;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
     }
-
-    html, body { height: 100%; background: var(--offwhite); }
-    body { font-family: var(--font); color: var(--black); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-
-    /* ── Header ── */
-    .site-header { background: #111; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 20px 24px 18px; text-align: center; }
-    .header-eyebrow { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-    .header-title { font-size: 18px; font-weight: 500; color: #fff; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; }
-    .header-title em { font-style: normal; color: var(--gold); }
-    .header-sub { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 4px; }
-    .header-username-row { display: none; }
-
-    /* ── Tabs & Filters ── */
-    .tab-bar { background: #111; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: center; gap: 0; padding: 0 16px; overflow-x: auto; }
-    .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: rgba(255,255,255,0.45); padding: 12px 16px; font-family: var(--font); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.18s; white-space: nowrap; }
-    .tab-btn.active { border-bottom-color: var(--gold); color: #fff; font-weight: 600; }
-    .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.8); }
-
-    .filter-bar { display: flex; justify-content: center; gap: 6px; padding: 12px 16px; background: #111; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
-    .filter-pill { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.18s; }
-    .filter-pill.active { background: var(--gold); border-color: var(--gold); color: #fff; }
-    .filter-pill:hover:not(.active) { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.85); }
-
-    /* ── Progress Banner ── */
-    .platform-label { text-align: center; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); padding: 16px 0 8px; }
-    .progress-banner { background: #fff; border-bottom: 1px solid var(--border); padding: 14px 16px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
-    @media (min-width: 600px) { .progress-divider { display: block !important; } }
-    .progress-header { display: none; }
-    .progress-title { display: none; }
-    .progress-pct { font-size: 26px; font-weight: 300; color: var(--black); line-height: 1; letter-spacing: -0.03em; }
-    .progress-pct span { font-size: 13px; color: var(--muted); font-weight: 300; }
-    .progress-track { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 0; }
-    .progress-fill { height: 100%; background: var(--black); border-radius: 2px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
-    .progress-actions { display: flex; gap: 4px; }
-    .action-chip { min-width: 68px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--offwhite); transition: all 0.18s; cursor: default; }
-    .action-chip.done { border-color: var(--green); background: #f2fbf6; }
-    .action-chip .chip-icon { display: none; }
-    .action-chip.done .chip-icon { display: none; }
-    .action-chip .chip-label { font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
-    .action-chip.done .chip-label { color: var(--green); }
-    .chip-count { font-size: 11px; font-weight: 600; color: var(--black); line-height: 1; }
-    .chip-count .chip-count-total { color: var(--muted); font-size: 10px; font-weight: 400; }
-    .action-chip.done .chip-count { color: var(--green); }
-    .progress-complete-msg { text-align: center; font-size: 11px; font-weight: 500; color: var(--green); letter-spacing: 0.04em; padding: 4px 0 0; display: none; }
-    .progress-complete-msg.visible { display: block; }
-    @media (max-width: 640px) {
-      .progress-actions { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-      .action-chip { min-width: 0; }
+    .shell { width: 100%; max-width: 500px; }
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-
-    /* ── Main Layout ── */
-    .main-layout { width: 100%; padding: 0 12px 48px; }
-    @media (min-width: 600px)  { .main-layout { padding: 0 20px 56px; } }
-    @media (min-width: 900px)  { .main-layout { padding: 0 24px 64px; } }
-    @media (min-width: 1400px) { .main-layout { padding: 0 40px 72px; } }
-    .focused-wrap { margin-bottom: 24px; max-width: 420px; margin-left: auto; margin-right: auto; }
-
-    /* ── IG Card ── */
-    .ig-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .ig-card-header { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-    .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--black); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 600; }
-    .ig-username { font-size: 12px; font-weight: 600; color: var(--black); }
-    .ig-location { font-size: 10px; color: var(--muted); margin-top: 1px; }
-    .ig-more { margin-left: auto; color: var(--muted); font-size: 16px; line-height: 1; background: none; border: none; cursor: pointer; }
-    .media-frame { width: 100%; aspect-ratio: 1/1; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 64px; position: relative; overflow: hidden; cursor: pointer; }
-    .media-frame-wide { aspect-ratio: 16/9; }
-    .media-frame-tall { aspect-ratio: 9/16; max-height: 420px; }
-    .play-overlay { position: absolute; width: 44px; height: 44px; background: rgba(0,0,0,0.45); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .duration-badge { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.55); color: #fff; font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 4px; }
-    .ig-actions { display: flex; align-items: center; gap: 10px; padding: 9px 12px 6px; }
-    .ig-action-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); transition: color 0.15s; }
-    .ig-action-btn:hover { color: var(--black); }
-    .ig-action-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
-    .ig-action-btn.liked svg { fill: var(--red); stroke: var(--red); color: var(--red); }
-    .ig-action-btn.liked { color: var(--red); }
-    .ig-action-btn.saved { color: var(--black); }
-    .ig-save { margin-left: auto; }
-    .ig-likes { padding: 0 12px 4px; font-size: 12px; font-weight: 600; }
-    .ig-caption { padding: 0 12px 12px; font-size: 12px; color: var(--black); line-height: 1.5; }
-
-    /* ── Card Checklist ── */
-    .card-checklist { display: flex; border-top: 1px solid var(--border); background: var(--offwhite); border-radius: 0 0 9px 9px; overflow: hidden; }
-    .card-check-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 9px; cursor: pointer; border-right: 1px solid var(--border); transition: background 0.15s; position: relative; user-select: none; }
-    .card-check-item:last-child { border-right: none; }
-    .card-check-item:hover { background: rgba(0,0,0,0.03); }
-    .card-check-item.done { background: #f2fbf6; }
-    .card-check-item .cci-icon { font-size: 15px; line-height: 1; transition: transform 0.2s; }
-    .card-check-item.done .cci-icon { transform: scale(1.1); }
-    .card-check-item .cci-label { font-size: 9px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
-    .card-check-item.done .cci-label { color: var(--green); }
-    .card-check-item .cci-tick { position: absolute; top: 6px; right: 6px; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: transparent; transition: all 0.2s; }
-    .card-check-item.done .cci-tick { background: var(--green); border-color: var(--green); color: #fff; }
-    .card-checklist-summary { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-top: 1px solid var(--border); background: #fff; }
-    .card-checklist-summary.all-done-bar { background: #f2fbf6; }
-    .checklist-summary-text { font-size: 11px; font-weight: 500; color: var(--muted); }
-    .card-checklist-summary.all-done-bar .checklist-summary-text { color: var(--green); }
-    .checklist-mini-bar { width: 72px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .checklist-mini-fill { height: 100%; background: var(--black); border-radius: 2px; transition: width 0.4s ease; }
-    .card-checklist-summary.all-done-bar .checklist-mini-fill { background: var(--green); }
-
-    /* ── Thumb Grid ── */
-    .grid-label { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 16px; }
-
-    /* ── Section Labels ── */
-    .section-row-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; margin-top: 4px; }
-    .section-row-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .section-row-label span { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); white-space: nowrap; display: flex; align-items: center; gap: 5px; }
-
-    .other-section-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; margin-top: 20px; }
-    .other-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .other-section-label span { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-
-    /* ── Thumb Grid layout ── */
-    .thumb-grid { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 4px 0; width: 100%; }
-    @media (min-width: 480px)  { .thumb-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 800px)  { .thumb-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 1100px) { .thumb-grid { grid-template-columns: repeat(4, 1fr); } }
-    @media (min-width: 1400px) { .thumb-grid { grid-template-columns: repeat(5, 1fr); } }
-    @media (min-width: 1800px) { .thumb-grid { grid-template-columns: repeat(6, 1fr); } }
-
-    /* ── Thumb card ── */
-    .thumb-item { width: 100%; cursor: pointer; border: 1px solid var(--border); border-radius: 10px; transition: box-shadow 0.18s, border-color 0.18s; display: flex; flex-direction: row; align-items: center; gap: 10px; background: #fff; padding: 10px 12px; min-height: 56px; }
-    .thumb-item:hover { border-color: rgba(0,0,0,0.15); box-shadow: 0 2px 10px -2px rgba(0,0,0,0.10); }
-    .thumb-item.focus-thumb { border-color: var(--gold); }
-    .thumb-item.completed { background: #eaf5ee; border-color: rgba(45,158,107,0.35); opacity: 0.75; }
-    .thumb-item.completed .thumb-info-user, .thumb-item.completed .thumb-info-type { color: var(--green); }
-    .thumb-mini-check { font-size: 11px; font-weight: 700; color: var(--green); margin-left: 4px; }
-
-    .thumb-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; background: var(--black); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; font-weight: 600; overflow: hidden; }
-    .thumb-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-    .thumb-text-block { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    .thumb-info-user { font-size: 12px; font-weight: 600; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .thumb-chip-row { display: flex; align-items: center; gap: 4px; min-width: 0; }
-    .thumb-chip-spacer { flex: 1; }
-    .thumb-info-type { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .thumb-mini-star { color: var(--gold); font-size: 10px; line-height: 1; flex-shrink: 0; }
-    .thumb-mini-new { background: var(--red); color: #fff; font-size: 7px; font-weight: 700; padding: 1px 4px; border-radius: 3px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.03em; }
-    .thumb-mini-done { color: var(--green); font-size: 11px; font-weight: 700; line-height: 1; flex-shrink: 0; }
-    .thumb-more-btn { flex-shrink: 0; color: var(--muted); font-size: 16px; line-height: 1; background: none; border: none; cursor: pointer; padding: 0 2px; }
-
-    /* ── Platform cards ── */
-    .tw-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-    .tw-card .focus-banner { margin: -14px -14px 12px; border-radius: 9px 9px 0 0; }
-    .tw-header { display: flex; gap: 9px; margin-bottom: 10px; }
-    .tw-info .tw-name { font-size: 13px; font-weight: 600; }
-    .tw-info .tw-handle { font-size: 11px; color: var(--muted); }
-    .tw-text { font-size: 14px; line-height: 1.55; margin-bottom: 10px; }
-    .tw-actions { display: flex; gap: 16px; border-top: 1px solid var(--border); padding-top: 10px; }
-    .tw-action { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; background: none; border: none; padding: 0; font-family: inherit; transition: color 0.15s; }
-    .tw-action svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
-    .tw-action.liked { color: var(--red); }
-
-    .fb-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .fb-header { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-    .fb-user { font-size: 12px; font-weight: 600; }
-    .fb-time { font-size: 10px; color: var(--muted); }
-    .fb-text { padding: 10px 12px; font-size: 13px; line-height: 1.5; }
-    .fb-reactions { padding: 6px 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); display: flex; gap: 8px; }
-    .fb-actions { display: flex; border-top: 1px solid var(--border); }
-    .fb-act { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 9px; font-size: 11px; font-weight: 500; color: var(--muted); cursor: pointer; background: none; border: none; border-right: 1px solid var(--border); transition: background 0.15s; }
-    .fb-act:last-child { border-right: none; }
-    .fb-act:hover { background: var(--offwhite); }
-    .fb-act svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
-    .fb-act.liked { color: var(--red); }
-
-    .yt-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .yt-info { padding: 10px 12px; }
-    .yt-title { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 3px; }
-    .yt-meta { font-size: 11px; color: var(--muted); }
-    .yt-actions { display: flex; gap: 14px; padding: 9px 12px; border-top: 1px solid var(--border); }
-    .yt-action { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); cursor: pointer; background: none; border: none; padding: 0; font-family: inherit; transition: color 0.15s; }
-    .yt-action svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
-    .yt-action.liked { color: var(--red); }
-
-    .tk-card { background: #111; border-radius: 10px; overflow: hidden; position: relative; }
-    .tk-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); padding: 16px 12px 12px; display: flex; justify-content: space-between; align-items: flex-end; }
-    .tk-left .tk-username { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 3px; }
-    .tk-left .tk-desc { font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.4; }
-    .tk-right { display: flex; flex-direction: column; gap: 14px; align-items: center; }
-    .tk-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #fff; font-size: 9px; cursor: pointer; background: none; border: none; padding: 0; font-family: inherit; }
-    .tk-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; }
-    .tk-btn.liked { color: var(--red); }
-    .action-icon { display: flex; align-items: center; justify-content: center; }
-
-    /* ── Divider ── */
-    .editorial-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
-    .editorial-divider::before, .editorial-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .editorial-divider span { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-
-    .focus-banner { background: var(--black); color: #fff; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; text-align: center; padding: 5px; }
-
-    /* ── Empty state ── */
-    .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
-    .empty-state-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.25; }
-    .empty-state-text { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
-    .empty-state-sub { font-size: 12px; color: var(--muted); }
-
-    /* ── Modals ── */
-    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 500; }
-    .modal-box { background: #fff; border-radius: 12px; padding: 28px 24px 24px; max-width: 92%; width: 380px; text-align: center; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
-    .modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 18px; line-height: 1; }
-    .modal-title { font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 18px; }
-    .comment-filter-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
-    .c-pill { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.15s; }
-    .c-pill.active { background: var(--black); border-color: var(--black); color: #fff; }
-    .comment-box { background: var(--offwhite); border-radius: 8px; padding: 16px; font-size: 14px; line-height: 1.65; color: var(--black); min-height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; border: 1px solid var(--border); }
-    .comment-pick-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-    .comment-pick { background: var(--offwhite); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--black); cursor: pointer; text-align: left; transition: all 0.15s; position: relative; }
-    .comment-pick:hover { border-color: var(--black); background: #fff; }
-    .comment-pick.picked { border-color: var(--black); background: #fff; }
-    .comment-pick.picked::after { content: '✓'; position: absolute; top: 8px; right: 10px; width: 18px; height: 18px; background: var(--black); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-    .comment-pick-hint { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 10px; font-weight: 500; }
-    .modal-actions { display: flex; gap: 8px; }
-    .btn-primary { flex: 1; background: var(--black); color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.15s; }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-gold { flex: 1; background: var(--gold); color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
-    .btn-gold:hover { opacity: 0.85; }
-    .btn-outline { flex: 1; background: transparent; color: var(--black); border: 1px solid var(--border); padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: border-color 0.15s; }
-    .btn-outline:hover { border-color: var(--black); }
-    .share-btn { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; margin-bottom: 8px; }
-    .share-btn:last-child { margin-bottom: 0; }
-    .share-btn.gold { background: var(--black); color: #fff; border: none; }
-    .share-btn.outline { background: transparent; color: var(--black); border: 1px solid var(--border); }
-    .share-btn:hover { opacity: 0.8; }
-
-    /* ── Toast ── */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--black); color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; white-space: nowrap; }
-    @keyframes confettiFall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100px) rotate(540deg); opacity: 0; } }
-    .confetti-p { position: fixed; width: 6px; height: 6px; animation: confettiFall 1.1s ease forwards; pointer-events: none; z-index: 9999; border-radius: 1px; }
-
-    .back-to-grid { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 7px 14px; border-radius: 20px; font-family: var(--font); font-size: 11px; font-weight: 500; cursor: pointer; margin-bottom: 14px; transition: all 0.15s; }
-    .back-to-grid:hover { border-color: var(--black); color: var(--black); }
-
-    /* ── ig-card all-done state ── */
-    .ig-card.all-done .media-frame { opacity: 0.4; filter: grayscale(40%); }
-    .ig-card.all-done::after { content: 'Completed!'; display: block; text-align: center; font-size: 11px; font-weight: 600; color: var(--green); padding: 7px; background: #f2fbf6; letter-spacing: 0.04em; }
-
-    /* ── Admin View ── */
-    #adminView .admin-header { background: #fff; border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-    #adminView .admin-header-left .eyebrow { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
-    #adminView .admin-header-left .title { font-size: 15px; font-weight: 600; color: var(--black); }
-    #adminView .admin-header-left .title em { font-style: normal; color: var(--gold); }
-    #adminView .admin-badge { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; background: var(--offwhite); color: var(--muted); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); }
-    #adminView .view-link { font-size: 11px; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 5px; cursor: pointer; transition: color 0.15s; }
-    #adminView .view-link:hover { color: var(--black); }
-    #adminView .header-right { display: flex; align-items: center; gap: 12px; }
-    #adminView .admin-body { max-width: 1180px; margin: 0 auto; padding: 24px 16px 60px; }
-    #adminView .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; margin-top: 28px; }
-    #adminView .section-head:first-child { margin-top: 0; }
-    #adminView .section-title { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
-    #adminView .section-count { font-size: 11px; color: var(--muted); }
-    #adminView .platform-filter-pill { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; font-family: var(--font); }
-    #adminView .platform.filter-pill:hover:not(.active) { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.85); }
-    #adminView .platform.filter-pill.active { background: var(--gold); border-color: var(--gold); color: #fff; }
-    #adminView .platform-filter-pill .pf-count { font-size: 10px; opacity: 0.7; }
-    #adminView .card { background: transparent; border: none; border-radius: 0; overflow: visible; margin-bottom: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-    @media (max-width: 860px) { #adminView .card { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
-    @media (max-width: 540px) { #adminView .card { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; } }
-    #adminView .post-item { display: flex; flex-direction: column; gap: 6px; align-items: stretch; padding: 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); transition: box-shadow 0.15s, border-color 0.15s; }
-    #adminView .post-item:hover { border-color: rgba(0,0,0,0.15); box-shadow: 0 2px 10px -2px rgba(0,0,0,0.10); }
-    #adminView .post-thumb { width: 100%; aspect-ratio: 1/1; border-radius: 7px; flex-shrink: 0; background: var(--offwhite); display: flex; align-items: center; justify-content: center; font-size: 18px; overflow: hidden; }
-    #adminView .post-meta { flex: 1; min-width: 0; }
-    #adminView .post-caption { font-size: 11px; font-weight: 500; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-    #adminView .post-tags { display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 2px; }
-    #adminView .tag { font-size: 8px; letter-spacing: 0.04em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; font-weight: 500; }
-    #adminView .tag-platform { background: var(--offwhite); color: var(--muted); border: 1px solid var(--border); }
-    #adminView .tag-type { background: #fef9ec; color: #8a5500; border: 1px solid #f5e0a0; }
-    #adminView .tag-media { background: #f2fbf6; color: #1a7a44; border: 1px solid #b2dfc5; }
-    #adminView .focus-badge { background: var(--gold); color: #fff; font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
-    #adminView .new-badge { background: var(--red); color: #fff; font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
-    #adminView .focus-ring { border-left: 3px solid var(--gold) !important; }
-    #adminView .icon-btn { background: none; border: 1px solid var(--border); color: var(--muted); width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-    #adminView .icon-btn:hover { border-color: var(--black); color: var(--black); }
-    #adminView .icon-btn.danger:hover { border-color: var(--red); color: var(--red); }
-    #adminView .icon-btn.star-on { border-color: var(--gold); color: var(--gold); background: #fef9ec; }
-    #adminView .icon-btn svg { width: 11px; height: 11px; stroke: currentColor; fill: none; }
-    #adminView .post-time { font-size: 9px; color: var(--muted); }
-    #adminView .post-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: auto; padding-top: 2px; }
-    #adminView .form-row { margin-bottom: 14px; }
-    #adminView .form-label { display: block; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
-    #adminView .form-input, #adminView .form-select, #adminView .form-textarea { width: 100%; background: var(--offwhite); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--black); font-family: var(--font); outline: none; transition: border-color 0.15s; appearance: none; }
-    #adminView .form-input:focus, #adminView .form-select:focus, #adminView .form-textarea:focus { border-color: var(--black); background: #fff; }
-    #adminView .form-textarea { min-height: 80px; resize: vertical; }
-    #adminView .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    #adminView .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    #adminView .btn-row { display: flex; gap: 8px; margin-top: 18px; }
-    #adminView .btn { padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s; display: flex; align-items: center; gap: 6px; }
-    #adminView .btn-black { background: var(--black); color: #fff; }
-    #adminView .btn-black:hover { opacity: 0.85; }
-    #adminView .btn-gold { background: var(--gold); color: #fff; flex: 1; justify-content: center; }
-    #adminView .btn-gold:hover { opacity: 0.85; }
-    #adminView .btn-outline { background: transparent; color: var(--black); border: 1px solid var(--border); }
-    #adminView .btn-outline:hover { border-color: var(--black); }
-    #adminView .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
-    #adminView .divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
-    #adminView .divider::before, #adminView .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    #adminView .divider span { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
-    #adminView .empty { text-align: center; padding: 40px 20px; color: var(--muted); grid-column: 1 / -1; }
-    #adminView .empty-text { font-size: 13px; font-weight: 500; }
-    #adminView .save-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 4px; }
-    #adminView .save-status { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
-    #adminView .username-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    #adminView .username-card-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--black); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; font-family: var(--font); flex-shrink: 0; }
-    #adminView .btn-danger { background: var(--red); color: #fff; }
-    #adminView .btn-danger:hover { opacity: 0.85; }
-    #adminView .confirm-text { font-size: 14px; line-height: 1.6; color: var(--muted); margin-bottom: 20px; }
-
-    /* ── Comment Picker (from index_4) ── */
-    .cp-shell { width: 100%; }
-    .cp-stats-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
-    .cp-stat { font-size: 11px; color: #999; background: #f7f7f6; border-radius: 999px; padding: 4px 12px; }
-    .cp-stat span { color: #111; font-weight: 500; }
-    .cp-card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 1.4rem 1.1rem; margin-bottom: 0.85rem; min-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.7rem; }
-    .cp-comment-text { font-size: 14px; color: #aaa; text-align: center; line-height: 1.65; }
-    .cp-comment-text.active { color: #111; font-size: 15px; }
-    .cp-tag-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
-    .cp-tag { font-size: 11px; letter-spacing: 0.05em; padding: 4px 11px; border-radius: 999px; border: 0.5px solid #e0e0e0; color: #aaa; background: #f7f7f6; }
-    .cp-tag.on { border-color: #bbb; color: #555; }
-    .cp-btn-row { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
-    .cp-btn-pick { font-size: 13px; font-weight: 500; letter-spacing: 0.05em; padding: 11px 22px; border-radius: 8px; background: #111; color: #fff; border: none; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
-    .cp-btn-pick:hover { opacity: 0.82; }
-    .cp-btn-pick:active { transform: scale(0.97); }
-    .cp-btn-pick:disabled { opacity: 0.45; cursor: not-allowed; }
-    .cp-btn-copy { font-size: 13px; padding: 10px 16px; border-radius: 8px; background: transparent; color: #555; border: 0.5px solid #bbb; cursor: pointer; display: none; align-items: center; gap: 6px; transition: background 0.15s; }
-    .cp-btn-copy:hover { background: #f7f7f6; }
-    .cp-btn-copy.show { display: inline-flex; }
-    .cp-hashtag-box { margin-top: 1.2rem; border-top: 0.5px solid #e0e0e0; padding-top: 1rem; }
-    .cp-hashtag-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #aaa; margin-bottom: 0.55rem; text-align: left; }
-    .cp-hashtag-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-    .cp-pill { font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 0.5px solid #e0e0e0; color: #555; background: #f7f7f6; cursor: pointer; transition: background 0.15s, border-color 0.15s; user-select: none; }
-    .cp-pill:hover { background: #eee; border-color: #bbb; }
-    .cp-pill.copied { background: #111; color: #fff; border-color: #111; }
-    .cp-pill.mention { background: #fff; color: #111; border-color: #c8c8c8; }
-    .cp-copy-all-btn { font-size: 12px; margin-top: 0.6rem; padding: 7px 14px; border-radius: 8px; background: transparent; color: #555; border: 0.5px solid #bbb; cursor: pointer; transition: background 0.15s; }
-    .cp-copy-all-btn:hover { background: #f7f7f6; }
-    .cp-gen-bar { margin-top: 1.2rem; border-top: 0.5px solid #e0e0e0; padding-top: 1rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; text-align: left; }
-    .cp-gen-info { font-size: 11px; color: #aaa; line-height: 1.55; }
-    .cp-gen-info strong { color: #555; font-weight: 500; display: block; margin-bottom: 2px; }
-    .cp-btn-gen { font-size: 12px; padding: 8px 14px; border-radius: 8px; background: transparent; color: #555; border: 0.5px solid #bbb; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background 0.15s; }
-    .cp-btn-gen:hover { background: #f7f7f6; }
-    .cp-btn-gen:disabled { opacity: 0.4; cursor: not-allowed; }
-    .cp-progress { height: 2px; background: #eee; border-radius: 1px; margin-top: 0.7rem; overflow: hidden; display: none; }
-    .cp-progress-bar { height: 100%; background: #555; border-radius: 1px; width: 0%; transition: width 0.3s ease; }
-    @keyframes cp-fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    .cp-animate-in { animation: cp-fadein 0.3s ease-out; }
-    #commentModal .modal-box { width: 440px; max-width: 94%; text-align: left; }
-
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: #e0e0e0;
+    }
+    .headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: #111;
+      text-align: center;
+      margin-bottom: 0.3rem;
+      line-height: 1.15;
+    }
+    .headline em { font-style: italic; }
+    .sub {
+      font-size: 12px;
+      color: #aaa;
+      text-align: center;
+      letter-spacing: 0.08em;
+      margin-bottom: 2rem;
+    }
+    .stats-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .stat {
+      font-size: 11px;
+      color: #999;
+      background: #f7f7f6;
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
+    .stat span { color: #111; font-weight: 500; }
+    .card {
+      background: #fff;
+      border: 0.5px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem 1.5rem;
+      margin-bottom: 1rem;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .qmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      line-height: 0.5;
+      color: #ddd;
+      align-self: flex-start;
+      user-select: none;
+      display: none;
+    }
+    .comment-text {
+      font-size: 15px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1.7;
+    }
+    .comment-text.active { color: #111; font-size: 16px; }
+    .tag-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.75rem;
+    }
+    .tag {
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      padding: 4px 11px;
+      border-radius: 999px;
+      border: 0.5px solid #e0e0e0;
+      color: #aaa;
+      background: #f7f7f6;
+    }
+    .tag.on { border-color: #bbb; color: #555; }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-pick {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 12px 30px;
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-pick:hover { opacity: 0.82; }
+    .btn-pick:active { transform: scale(0.97); }
+    .btn-copy {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 11px 18px;
+      border-radius: 8px;
+      background: transparent;
+      color: #555;
+      border: 0.5px solid #bbb;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover { background: #f7f7f6; }
+    .btn-copy.show { display: flex; }
+    .gen-bar {
+      margin-top: 1.75rem;
+      border-top: 0.5px solid #e0e0e0;
+      padding-top: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .gen-info { font-size: 12px; color: #aaa; line-height: 1.6; }
+    .gen-info strong { color: #555; font-weight: 500; display: block; margin-bottom: 2px; }
+    .btn-gen {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      background: transparent;
+      color: #555;
+      border: 0.5px solid #bbb;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .btn-gen:hover { background: #f7f7f6; }
+    .btn-gen:disabled { opacity: 0.4; cursor: not-allowed; }
+    .progress {
+      height: 2px;
+      background: #eee;
+      border-radius: 1px;
+      margin-top: 0.85rem;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #555;
+      border-radius: 1px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .hashtag-box {
+      margin-top: 1.5rem;
+      border-top: 0.5px solid #e0e0e0;
+      padding-top: 1.25rem;
+    }
+    .hashtag-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 0.65rem;
+    }
+    .hashtag-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pill {
+      font-size: 12px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      border: 0.5px solid #e0e0e0;
+      color: #555;
+      background: #f7f7f6;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .pill:hover { background: #eee; border-color: #bbb; }
+    .pill.copied { background: #111; color: #fff; border-color: #111; }
+    .copy-all-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      margin-top: 0.75rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: transparent;
+      color: #555;
+      border: 0.5px solid #bbb;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .copy-all-btn:hover { background: #f7f7f6; }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadein 0.3s ease-out; }
   </style>
 </head>
 <body>
+  <div class="shell">
+    <p class="eyebrow">Prada · Milan · SS27</p>
+    <h1 class="headline">Comment <em>picker</em></h1>
+    <p class="sub">Pond Naravit at Milan Fashion Show</p>
 
-<!-- ═══════════════════════════════════════════════════════ PUBLIC VIEW ═══ -->
-<div id="publicView">
-
-<header class="site-header">
-  <div class="header-eyebrow">Milan Fashion Show · SS27</div>
-  <h1 class="header-title">Pond Naravit <em>×</em> Prada</h1>
-  <div class="header-sub">Engagement Tracker</div>
-</header>
-
-<div class="tab-bar">
-  <button class="tab-btn active" id="tabAll"     onclick="setPlatform('all')">All</button>
-  <button class="tab-btn"        id="tabIG"      onclick="setPlatform('ig')">IG</button>
-  <button class="tab-btn"        id="tabTW"      onclick="setPlatform('twitter')">X</button>
-  <button class="tab-btn"        id="tabFB"      onclick="setPlatform('fb')">FB</button>
-  <button class="tab-btn"        id="tabYT"      onclick="setPlatform('youtube')">YT</button>
-  <button class="tab-btn"        id="tabTK"      onclick="setPlatform('tiktok')">TikTok</button>
-</div>
-
-<div class="filter-bar">
-  <button class="filter-pill"        id="pfFocus"   onclick="setPageFilter('focus')">Focus</button>
-  <button class="filter-pill"        id="pfAirport" onclick="setPageFilter('airport')">Airport</button>
-  <button class="filter-pill"        id="pfPreday"  onclick="setPageFilter('preday')">Pre-Day</button>
-  <button class="filter-pill"        id="pfDayevent" onclick="setPageFilter('dayevent')">Day Event</button>
-  <button class="filter-pill"        id="pfAfter"   onclick="setPageFilter('after')">After</button>
-</div>
-
-<!-- Progress Banner -->
-<div style="background:var(--warm-white); border-bottom:1px solid var(--border)">
-  <div class="progress-banner">
-
-    <!-- % big number -->
-    <div style="text-align:center;flex-shrink:0">
-      <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px">Progress</div>
-      <div class="progress-pct" id="progressPct" style="font-size:28px;font-weight:700;line-height:1;letter-spacing:-0.02em">0<span style="font-size:14px;color:var(--muted);font-weight:400">%</span></div>
+    <div class="stats-row">
+      <div class="stat">Pool: <span id="pool-count">0</span></div>
+      <div class="stat">Picked: <span id="pick-count">0</span></div>
+      <div class="stat">Remaining: <span id="remain-count">0</span></div>
     </div>
 
-    <!-- progress bar -->
-    <div style="flex:1;min-width:160px;max-width:400px">
-      <div class="progress-track" style="margin-bottom:0">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
-      <div class="progress-complete-msg" id="progressCompleteMsg" style="padding-top:6px">
-        All actions completed! Thank you for supporting Pond.
-      </div>
+    <div class="card">
+      <div class="qmark" id="qmark">"</div>
+      <p class="comment-text" id="result">Generate comments first, then pick</p>
     </div>
 
-    <!-- divider -->
-    <div style="width:1px;height:48px;background:var(--border);flex-shrink:0;display:none" class="progress-divider"></div>
-
-    <!-- chips -->
-    <div class="progress-actions">
-      <div class="action-chip" id="chip-liked">
-        <span class="chip-icon" id="chipIconLiked"></span>
-        <span class="chip-label">Like</span>
-        <div class="chip-count" id="chipCount-liked">0<span class="chip-count-total">/0</span></div>
-      </div>
-      <div class="action-chip" id="chip-commented" onclick="chipOpenComment()" style="cursor:pointer">
-        <span class="chip-icon" id="chipIconCommented"></span>
-        <span class="chip-label">Comment</span>
-        <div class="chip-count" id="chipCount-commented">0<span class="chip-count-total">/0</span></div>
-      </div>
-      <div class="action-chip" id="chip-shared" onclick="chipOpenShare()" style="cursor:pointer">
-        <span class="chip-icon" id="chipIconShared"></span>
-        <span class="chip-label">Share</span>
-        <div class="chip-count" id="chipCount-shared">0<span class="chip-count-total">/0</span></div>
-      </div>
-      <div class="action-chip" id="chip-saved">
-        <span class="chip-icon" id="chipIconSaved"></span>
-        <span class="chip-label">Save</span>
-        <div class="chip-count" id="chipCount-saved">0<span class="chip-count-total">/0</span></div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="platform-label" id="platformLabel" style="display:none">All Platforms</div>
-
-<div class="main-layout">
-  <div id="focusedWrap" class="focused-wrap"></div>
-  <div class="editorial-divider" id="moreDivider" style="display:none"><span>More posts</span></div>
-  <div class="grid-label" id="gridLabel" style="display:none">Tap to view</div>
-  <div id="focusGrid" class="thumb-grid"></div>
-  <div id="thumbGrid" class="thumb-grid"></div>
-</div>
-
-<!-- Comment Modal (Prada SS27 Comment Picker) -->
-<div id="commentModal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeCommentModal()">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeCommentModal()">✕</button>
-    <div class="modal-title" style="text-align:center">Comment <em style="font-style:italic;color:var(--gold)">picker</em></div>
-
-    <div class="cp-shell">
-      <div class="cp-stats-row">
-        <div class="cp-stat">Pool: <span id="commentPoolCount">0</span></div>
-        <div class="cp-stat">Picked: <span id="commentPickedCount">0</span></div>
-        <div class="cp-stat">Remaining: <span id="cp-remain-count">0</span></div>
-      </div>
-
-      <div class="cp-card">
-        <p class="cp-comment-text" id="cp-result">Generate comments first, then pick</p>
-      </div>
-
-      <div class="cp-tag-row">
-        <span class="cp-tag" id="cp-tag-tone">—</span>
-        <span class="cp-tag" id="cp-tag-num">—</span>
-      </div>
-
-      <div class="cp-btn-row">
-        <button class="cp-btn-pick" id="cp-btn-pick" onclick="cpPick()" disabled>&#8635; Pick a comment</button>
-        <button class="cp-btn-copy" id="cp-copy-btn" onclick="cpCopyIt()">&#10697; <span id="cp-copy-label">Copy with hashtags</span></button>
-      </div>
-
-      <div class="cp-hashtag-box">
-        <p class="cp-hashtag-label">Instagram hashtags</p>
-        <div class="cp-hashtag-pills">
-          <span class="cp-pill mention" onclick="cpCopyPill(this, '@ppnaravit')">@ppnaravit</span>
-          <span class="cp-pill mention" onclick="cpCopyPill(this, '@prada')">@prada</span>
-          <span class="cp-pill" onclick="cpCopyPill(this, '#PradaSS27xPond')">#PradaSS27xPond</span>
-          <span class="cp-pill" onclick="cpCopyPill(this, '#ppnaravit')">#ppnaravit</span>
-          <span class="cp-pill" onclick="cpCopyPill(this, '#PradaSS27')">#PradaSS27</span>
-          <span class="cp-pill" onclick="cpCopyPill(this, '#Prada')">#Prada</span>
-          <span class="cp-pill" onclick="cpCopyPill(this, '#PondNaravit')">#PondNaravit</span>
-        </div>
-        <button class="cp-copy-all-btn" onclick="cpCopyAllHashtags()">&#10697; Copy all hashtags</button>
-      </div>
-
-      <div class="cp-gen-bar">
-        <div class="cp-gen-info">
-          <strong id="cp-gen-status">Ready to generate</strong>
-          Click to generate 500 comments. Keep clicking to grow the pool to 10,000+.
-        </div>
-        <button class="cp-btn-gen" id="cp-btn-gen" onclick="cpGenerateBatch()">&#10024; Generate 500</button>
-      </div>
-      <div class="cp-progress" id="cp-progress">
-        <div class="cp-progress-bar" id="cp-progress-bar"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-</div><!-- /publicView -->
-
-
-<!-- ════════════════════════════════════════════════════════ ADMIN VIEW ════ -->
-<div id="adminView" style="display:none">
-
-<header class="admin-header">
-  <div class="admin-header-left">
-    <div class="eyebrow">Pond Naravit × Prada</div>
-    <div class="title">Admin <em>Panel</em></div>
-  </div>
-  <div class="header-right">
-    <span class="admin-badge">ADMIN</span>
-    <span class="view-link" onclick="exitAdmin()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-      View Public Page
-    </span>
-  </div>
-</header>
-
-<div class="admin-body">
-
-  <!-- Username -->
-  <div class="section-head" style="margin-top:0">
-    <div class="section-title">Display Username</div>
-  </div>
-  <div class="username-card">
-    <div class="username-card-avatar">P</div>
-    <div style="flex:1">
-      <div style="font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;font-weight:600">Name shown on every platform card</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div style="position:relative;flex:1">
-          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none">@</span>
-          <input type="text" id="adminUsernameInput" class="form-input" placeholder="pondnaravit" maxlength="40"
-            style="padding-left:26px"
-            oninput="updateUsernamePreview(this.value)"
-            onkeydown="if(event.key==='Enter')saveAdminUsername()">
-        </div>
-        <button class="btn btn-gold" style="white-space:nowrap;padding:10px 16px;border:none;border-radius:2px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" onclick="saveAdminUsername()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Save
-        </button>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px" id="adminUsernamePreview">Displayed as: <strong>@pondnaravit</strong></div>
-    </div>
-  </div>
-
-  <!-- Posts -->
-  <div class="section-head">
-    <div class="section-title">All Posts</div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <div class="section-count" id="postCount">0 posts</div>
-      <button class="btn btn-outline" style="flex:none;border-radius:2px;font-size:13px;font-weight:600;padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:6px" onclick="openBulkAddModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        Bulk Add
-      </button>
-      <button class="btn btn-black" style="border:none;border-radius:2px;font-size:13px;font-weight:600;padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:6px;background:var(--black);color:#fff" onclick="openAddModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        Add New Post
-      </button>
-    </div>
-  </div>
-  <div style="position:relative;margin-bottom:12px">
-    <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    </span>
-    <input type="text" id="adminSearchInput" class="form-input" placeholder="Search by username or post label..." style="padding-left:32px" oninput="renderPosts()">
-  </div>
-  <div id="adminPlatformFilterRow" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
-  <div class="card" id="postList">
-    <div class="empty"><div class="empty-text">No posts yet</div></div>
-  </div>
-
-</div><!-- /admin-body -->
-
-<!-- Post Add/Edit Modal -->
-<div id="postModal" class="modal-bg" style="display:none" onclick="if(event.target===this)closePostModal()">
-  <div class="modal-box" style="text-align:left;max-height:90vh;overflow-y:auto;width:420px">
-    <button class="modal-close" onclick="closePostModal()">✕</button>
-    <div class="modal-title" id="modalTitle">Add New Post</div>
-
-    <div class="form-row">
-      <label class="form-label">Platform</label>
-      <select class="form-select" id="fPlatform" onchange="renderPreview()">
-        <option value="ig">Instagram</option>
-        <option value="twitter">Twitter / X</option>
-        <option value="fb">Facebook</option>
-        <option value="youtube">YouTube</option>
-        <option value="tiktok">TikTok</option>
-      </select>
-    </div>
-
-    <div class="form-row-2">
-      <div>
-        <label class="form-label">Media Type</label>
-        <select class="form-select" id="fMediaType" onchange="renderPreview()">
-          <option value="photo">Photo</option>
-          <option value="video">Video</option>
-          <option value="reel">Reel</option>
-          <option value="story">Story</option>
-          <option value="carousel">Carousel</option>
-          <option value="live">Live</option>
-          <option value="short">Short / TikTok</option>
-          <option value="article">Article</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">Post Type</label>
-        <select class="form-select" id="fType">
-          <option value="all">All</option>
-          <option value="focus">Focus</option>
-          <option value="airport">Airport</option>
-          <option value="preday">Pre-Day</option>
-          <option value="dayevent">Day Event</option>
-          <option value="after">After</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <label class="form-label">Post Name / Label</label>
-      <input type="text" class="form-input" id="fLabel" placeholder="e.g. Prada Day 1 Look, Front Row Moment..." oninput="renderPreview()">
-    </div>
-
-    <div class="form-row">
-      <label class="form-label">Username (this post only)</label>
-      <div style="position:relative">
-        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none">@</span>
-        <input type="text" class="form-input" id="fUsername" placeholder="pondnaravit" maxlength="40" style="padding-left:26px" oninput="renderPreview()">
-      </div>
-      <div style="font-size:10px;color:var(--muted);margin-top:4px">Leave blank to use the default Display Username</div>
-    </div>
-
-    <div class="form-row">
-      <label class="form-label">Post URL (link to the actual post)</label>
-      <input type="text" class="form-input" id="fPostUrl" placeholder="https://www.instagram.com/p/...">
-    </div>
-
-    <div class="form-row-2">
-      <div>
-        <label class="form-label">Post Time</label>
-        <input type="datetime-local" class="form-input" id="fTime">
-      </div>
-      <div>
-        <label class="form-label">Likes (actual)</label>
-        <input type="number" class="form-input" id="fLikes" placeholder="0" min="0">
-      </div>
-    </div>
-
-    <div class="form-row-2">
-      <div>
-        <label class="form-label">Comments (actual)</label>
-        <input type="number" class="form-input" id="fComments" placeholder="0" min="0">
-      </div>
-      <div>
-        <label class="form-label">Shares (actual)</label>
-        <input type="number" class="form-input" id="fShares" placeholder="0" min="0">
-      </div>
-    </div>
-
-    <!-- Required Actions -->
-    <div class="form-row">
-      <label class="form-label">Required Actions</label>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="fReqLike" checked> Like</label>
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="fReqComment" checked> Comment</label>
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="fReqShare" checked> Share</label>
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="fReqSave" checked> Save</label>
-      </div>
-    </div>
-
-    <!-- Thumbnail -->
-    <div class="form-row">
-      <label class="form-label">Thumbnail Image (URL)</label>
-      <input type="text" class="form-input" id="fImgUrl" placeholder="https://example.com/image.jpg" oninput="handleImgUrl(this.value)">
-      <div id="urlPreviewWrap" style="display:none;margin-top:8px;position:relative">
-        <img id="urlPreviewImg" style="width:100%;max-height:200px;object-fit:cover;border-radius:3px;border:1px solid var(--border)" onerror="this.parentElement.style.display='none';showToast('Could not load image — check the URL')">
-        <button type="button" onclick="clearImage()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center">✕</button>
-      </div>
-    </div>
-
-    <!-- Focus toggle -->
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;margin-bottom:14px;cursor:pointer" onclick="toggleFocusPick()" id="focusToggleRow">
-      <span id="focusStarIcon" style="font-size:20px"></span>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:600">Focus Post</div>
-        <div style="font-size:11px;color:var(--muted)">Shown first on the home page</div>
-      </div>
-      <div id="focusCheckbox" style="width:20px;height:20px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all 0.15s"></div>
-    </div>
-
-    <div class="divider"><span>Preview</span></div>
-    <div id="previewCard" style="border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:4px"></div>
-
-    <div class="btn-row">
-      <button class="btn btn-outline" onclick="closePostModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="savePost()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path></svg>
-        Save Post
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Bulk Add Modal -->
-<div id="bulkAddModal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeBulkAddModal()">
-  <div class="modal-box" style="text-align:left;max-height:90vh;overflow-y:auto;width:420px">
-    <button class="modal-close" onclick="closeBulkAddModal()">✕</button>
-    <div class="modal-title">Bulk Add Posts</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px">
-      Paste one post link per line. The settings below apply to every link. To set a different username per line, write it as <code>username | link</code>.
-    </div>
-
-    <div class="form-row">
-      <label class="form-label">Platform</label>
-      <select class="form-select" id="bPlatform">
-        <option value="ig">Instagram</option>
-        <option value="twitter">Twitter / X</option>
-        <option value="fb">Facebook</option>
-        <option value="youtube">YouTube</option>
-        <option value="tiktok">TikTok</option>
-      </select>
-    </div>
-
-    <div class="form-row-2">
-      <div>
-        <label class="form-label">Media Type</label>
-        <select class="form-select" id="bMediaType">
-          <option value="photo">Photo</option>
-          <option value="video">Video</option>
-          <option value="reel">Reel</option>
-          <option value="story">Story</option>
-          <option value="carousel">Carousel</option>
-          <option value="live">Live</option>
-          <option value="short">Short / TikTok</option>
-          <option value="article">Article</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">Post Type</label>
-        <select class="form-select" id="bType">
-          <option value="all">All</option>
-          <option value="focus">Focus</option>
-          <option value="airport">Airport</option>
-          <option value="preday">Pre-Day</option>
-          <option value="dayevent">Day Event</option>
-          <option value="after">After</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <label class="form-label">Links (one per line)</label>
-      <textarea class="form-textarea" id="bLinks" style="min-height:140px" placeholder="mensfolio | https://www.instagram.com/p/xxxx&#10;https://www.instagram.com/p/yyyy&#10;esquirethai | https://www.instagram.com/p/zzzz"></textarea>
-    </div>
-
-    <div class="form-row">
-      <label class="form-label">Required Actions</label>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="bReqLike" checked> Like</label>
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="bReqComment" checked> Comment</label>
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="bReqShare" checked> Share</label>
-        <label style="display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:3px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="bReqSave" checked> Save</label>
-      </div>
+    <div class="tag-row">
+      <span class="tag" id="tag-tone">—</span>
+      <span class="tag" id="tag-num">—</span>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-outline" onclick="closeBulkAddModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="submitBulkAdd()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        Add All
-      </button>
+      <button class="btn-pick" id="btn-pick" onclick="pick()" disabled>&#8635; Pick a comment</button>
+      <button class="btn-copy" id="copy-btn" onclick="copyIt()">&#10697; <span id="copy-label">Copy with hashtags</span></button>
+    </div>
+
+    <div class="hashtag-box">
+      <p class="hashtag-label">Instagram hashtags</p>
+      <div class="hashtag-pills">
+        <span class="pill" onclick="copyPill(this, '#PradaSS27xPond')">#PradaSS27xPond</span>
+        <span class="pill" onclick="copyPill(this, '#ppnaravit')">#ppnaravit</span>
+        <span class="pill" onclick="copyPill(this, '#PradaSS27')">#PradaSS27</span>
+        <span class="pill" onclick="copyPill(this, '#Prada')">#Prada</span>
+        <span class="pill" onclick="copyPill(this, '#PondNaravit')">#PondNaravit</span>
+      </div>
+      <button class="copy-all-btn" onclick="copyAllHashtags()">&#10697; Copy all hashtags</button>
+    </div>
+
+    <div class="gen-bar">
+      <div class="gen-info">
+        <strong id="gen-status">Ready to generate</strong>
+        Click to generate 500 comments. Keep clicking to grow the pool to 10,000+.
+      </div>
+      <button class="btn-gen" id="btn-gen" onclick="generateBatch()">&#10024; Generate 500</button>
+    </div>
+    <div class="progress" id="progress">
+      <div class="progress-bar" id="progress-bar"></div>
     </div>
   </div>
-</div>
 
-<!-- Delete Modal -->
-<div id="deleteModal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeDeleteModal()">
-  <div class="modal-box" style="max-width:320px;text-align:center">
-    <div class="modal-title">Delete this post?</div>
-    <p class="confirm-text">This action cannot be undone. The post will no longer appear on the public page.</p>
-    <div class="btn-row">
-      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="closeDeleteModal()">Cancel</button>
-      <button class="btn btn-danger"  style="flex:1;justify-content:center" onclick="confirmDelete()">Delete</button>
-    </div>
-  </div>
-</div>
+  <script>
+    let pool = [];
+    let used = new Set();
+    let pickCount = 0;
+    let selected = null;
+    let batchNum = 0;
+    let generating = false;
 
-</div><!-- /adminView -->
+    const TONES = ["Praising Prada","Adoring Pond","Grateful Fan","Brand Love","Pure Pride","Emotional","Iconic Moment"];
 
-<div id="toast" class="toast" style="display:none"></div>
+    const EMOJIS = ["🖤","✨","🔥","🇹🇭","🇮🇹","💫","👑","🙌","💯","😍","🌍","🫶","🙏","💕","🤍","🖤✨","🇹🇭✨","💯🖤","👑✨","🙏🖤","🔥🖤","✨🇹🇭","🌟","💎","🫰"];
 
-<!-- ═══════════════════════════════════════════════════════════ SCRIPT ════ -->
-<script>
-// ─── Helpers ────────────────────────────────────────────────────────────────
-function formatNum(n) {
-  n = parseInt(n) || 0;
-  if (n >= 1000000) { const v = n / 1000000; return (v % 1 === 0 ? v.toFixed(0) : parseFloat(v.toFixed(1)).toString()) + 'M'; }
-  if (n >= 1000)    { const v = n / 1000;    return (v % 1 === 0 ? v.toFixed(0) : parseFloat(v.toFixed(1)).toString()) + 'K'; }
-  return n.toString();
-}
+    const PRADA_PRAISE = [
+      "Prada has always defined what luxury means",
+      "Prada's legacy speaks for itself",
+      "The house of Prada sets the standard every season",
+      "Prada's vision is unlike anything else in fashion",
+      "No brand carries prestige quite like Prada",
+      "Prada continues to lead the fashion world with grace",
+      "Prada's craftsmanship and taste are second to none",
+      "The Prada universe is one of elegance and intention",
+      "Prada has always understood true sophistication",
+      "The brilliance of Prada never stops inspiring us",
+      "Prada remains the pinnacle of Italian fashion excellence",
+      "There is a reason the whole world looks to Prada every season",
+      "Prada's eye for beauty is simply unmatched",
+      "Prada proves season after season why they are the greatest",
+      "The world of Prada is built on excellence and nothing less",
+    ];
 
-const platformNames = { all:'All Platforms', ig:'Instagram', twitter:'Twitter / X', fb:'Facebook', youtube:'YouTube', tiktok:'TikTok' };
-const MEDIA_LABELS  = { photo:'Photo', video:'Video', reel:'Reel', story:'Story', carousel:'Carousel', live:'Live', short:'Short', article:'Article' };
-const PLATFORMS     = { ig:'Instagram', twitter:'Twitter/X', fb:'Facebook', youtube:'YouTube', tiktok:'TikTok' };
+    const POND_PRAISE = [
+      "Pond Naravit is everything a fashion icon should be",
+      "Pond Naravit carries himself with an elegance that is rare and real",
+      "The presence of Pond Naravit is impossible to ignore",
+      "Pond Naravit radiates a charm that the camera simply cannot contain",
+      "Pond Naravit is the definition of effortless grace",
+      "There is something magnetic about Pond Naravit that draws every eye",
+      "Pond Naravit's beauty goes far beyond what words can describe",
+      "Pond Naravit belongs in the highest rooms of fashion and tonight proved it",
+      "The elegance Pond Naravit brings is timeless and extraordinary",
+      "Pond Naravit made every single moment at Milan unforgettable",
+      "Pond Naravit is not just handsome — he is a genuine icon",
+      "The world is finally seeing what Thailand has always known about Pond Naravit",
+      "Pond Naravit's style, grace, and presence are on another level entirely",
+      "Watching Pond Naravit at Milan Fashion Week is watching greatness in motion",
+      "Pond Naravit is the kind of person that fashion was invented for",
+    ];
 
-// ─── SVG icon set ───────────────────────────────────────────────────────────
-const icons = {
-  heart:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
-  heartFilled:`<svg width="20" height="20" viewBox="0 0 24 24" fill="#e74c3c" stroke="#e74c3c" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
-  comment:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
-  share:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`,
-  bookmark:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>`,
-  bookmarkFilled:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>`,
-  repeat:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>`,
-  play:`<svg width="26" height="26" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`,
-  thumbup:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>`,
-  msgCircle:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
-  shareArrow:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
-  music:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`,
-  camera:`<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>`,
-  star:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
-  starFilled:`<svg width="20" height="20" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
-  extLink:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`,
-};
+    const GRATITUDE = [
+      "thank you Prada for choosing Pond Naravit",
+      "thank you Prada for seeing what we see in Pond Naravit",
+      "thank you Prada for giving Pond Naravit this stage",
+      "thank you Prada for inviting Pond Naravit to SS27",
+      "thank you Prada for recognizing that Pond Naravit belongs here",
+      "thank you Prada for making this dream real for Pond Naravit and all of us",
+      "thank you Prada for placing Pond Naravit exactly where he deserves to be",
+      "we are so grateful to Prada for choosing Pond Naravit for SS27 Milan",
+      "Prada we thank you from the bottom of our hearts for Pond Naravit",
+      "from every fan: thank you Prada for believing in Pond Naravit",
+    ];
 
-function thumbImgError(img) {
-  const p = img.parentElement;
-  if (p) p.innerHTML = icons.camera;
-}
+    const LOCATION = [
+      "at Prada SS27 Milan",
+      "at Milan Fashion Week SS27",
+      "at the Prada SS27 show in Milan",
+      "on the front row at Prada Milan",
+      "at Prada Milan Fashion Week",
+      "at SS27 in Milan",
+      "at the Prada show in Milan",
+      "at Prada SS27",
+    ];
 
-// ─── State ───────────────────────────────────────────────────────────────────
-let currentPlatform = 'all';
-let pageFilter      = 'all';
-let focusedIndex    = null;
-let currentComment  = '';
-let currentPostId   = null;
+    const STRUCTURES = [
+      () => `${rnd(PRADA_PRAISE)} — and ${rnd(GRATITUDE)} ${rnd(LOCATION)} {e}`,
+      () => `${rnd(POND_PRAISE)} ${rnd(LOCATION)} — ${rnd(GRATITUDE)} {e}`,
+      () => `${cap(rnd(GRATITUDE))} ${rnd(LOCATION)}. ${rnd(POND_PRAISE)} {e}`,
+      () => `${rnd(PRADA_PRAISE)}, and Pond Naravit proved it ${rnd(LOCATION)} — ${rnd(GRATITUDE)} {e}`,
+      () => `${rnd(POND_PRAISE)}. ${cap(rnd(GRATITUDE))} ${rnd(LOCATION)} {e}`,
+      () => `Dear Prada: ${rnd(GRATITUDE)} ${rnd(LOCATION)}. ${rnd(POND_PRAISE)} {e}`,
+      () => `${rnd(PRADA_PRAISE)}. That is why we ${rnd(GRATITUDE)} ${rnd(LOCATION)} {e}`,
+      () => `We are in awe of Pond Naravit ${rnd(LOCATION)}, and ${rnd(GRATITUDE)} for this moment {e}`,
+      () => `${cap(rnd(GRATITUDE))} ${rnd(LOCATION)}. The world now sees that ${rnd(POND_PRAISE).toLowerCase()} {e}`,
+      () => `${rnd(PRADA_PRAISE)}, just as Pond Naravit showed us all ${rnd(LOCATION)} {e}`,
+    ];
 
-const STATES_KEY = 'pond_post_states_v1';
-const postStates = new Map();
-try {
-  const raw = localStorage.getItem(STATES_KEY);
-  if (raw) {
-    const obj = JSON.parse(raw);
-    Object.keys(obj).forEach(k => {
-      const v = obj[k] || {};
-      const toCount = x => (typeof x === 'number') ? x : (x ? 1 : 0);
-      postStates.set(k, { liked:toCount(v.liked), saved:toCount(v.saved), commented:toCount(v.commented), shared:toCount(v.shared) });
-    });
-  }
-} catch(e) {}
-function saveStates() {
-  try {
-    const obj = {};
-    postStates.forEach((v, k) => { obj[k] = v; });
-    localStorage.setItem(STATES_KEY, JSON.stringify(obj));
-  } catch(e) {}
-}
-function getState(id) {
-  if (!postStates.has(id)) postStates.set(id, { liked:0, saved:0, commented:0, shared:0 });
-  return postStates.get(id);
-}
-function isAllDone(id) {
-  const s = getState(id);
-  const p = posts.find(x => x.id === id);
-  const req = getRequired(p);
-  return Object.keys(req).every(k => !req[k] || s[k] > 0);
-}
+    function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-// ─── Seen posts (per-browser "New" tracking) ─────────────────────────────────
-const SEEN_KEY = 'pond_seen_posts_v1';
-const seenPosts = new Set();
-try {
-  const rawSeen = localStorage.getItem(SEEN_KEY);
-  if (rawSeen) JSON.parse(rawSeen).forEach(id => seenPosts.add(id));
-} catch(e) {}
-function saveSeenPosts() {
-  try { localStorage.setItem(SEEN_KEY, JSON.stringify([...seenPosts])); } catch(e) {}
-}
-function markSeen(id) {
-  if (!id || seenPosts.has(id)) return;
-  seenPosts.add(id);
-  saveSeenPosts();
-}
-function isNewPost(p) {
-  return !!(p && p.id) && !seenPosts.has(p.id);
-}
+    function generateBatch() {
+      if (generating) return;
+      generating = true;
+      batchNum++;
 
-function _truthy(v) { return v === true || v === 'TRUE' || v === 'true' || v === 1 || v === '1'; }
-function getRequired(p) {
-  if (!p) return { liked:true, commented:true, shared:true, saved:true };
-  if (p.focused) return { liked:true, commented:true, shared:true, saved:true };
-  const has = ['requireLike','requireComment','requireShare','requireSave','require_like','require_comment','require_share','require_save']
-    .some(k => p[k] !== undefined);
-  if (!has) return { liked:true, commented:true, shared:true, saved:true };
-  return {
-    liked:    _truthy(p.requireLike    ?? p.require_like),
-    commented:_truthy(p.requireComment ?? p.require_comment),
-    shared:   _truthy(p.requireShare   ?? p.require_share),
-    saved:    _truthy(p.requireSave    ?? p.require_save),
-  };
-}
-function requiredCount(p) {
-  const r = getRequired(p);
-  return (r.liked?1:0)+(r.commented?1:0)+(r.shared?1:0)+(r.saved?1:0);
-}
-function setRequiredFields(required) {
-  const fields = [
-    ['fReqLike', 'liked'],
-    ['fReqComment', 'commented'],
-    ['fReqShare', 'shared'],
-    ['fReqSave', 'saved'],
-  ];
-  fields.forEach(([id, key]) => {
-    const el = document.getElementById(id);
-    if (el) el.checked = !!required[key];
-  });
-}
-function getRequiredField(id, fallback = true) {
-  const el = document.getElementById(id);
-  return el ? el.checked : fallback;
-}
+      const btn = document.getElementById('btn-gen');
+      btn.disabled = true;
+      btn.textContent = 'Generating…';
 
-// ─── Username ────────────────────────────────────────────────────────────────
-let currentUsername = 'pondnaravit';
-try { const u = localStorage.getItem('pond_username'); if (u) currentUsername = u; } catch(e) {}
+      const prog = document.getElementById('progress');
+      const bar = document.getElementById('progress-bar');
+      prog.style.display = 'block';
+      bar.style.width = '5%';
+      document.getElementById('gen-status').textContent = 'Generating batch ' + batchNum + '…';
 
-function getUsername() { return currentUsername; }
-function getPostUsername(post) { return (post && post.username) ? post.username : currentUsername; }
+      const seen = new Set(pool.map(c => c.text));
+      const batch = [];
+      let attempts = 0;
+      const target = 500;
 
-function updateUsernamePreview(val) {
-  const clean = val.replace(/^@/, '') || 'pondnaravit';
-  const el = document.getElementById('adminUsernamePreview');
-  if (el) el.innerHTML = 'Displayed as: <strong>@' + clean + '</strong>';
-}
-function saveAdminUsername() {
-  const val = document.getElementById('adminUsernameInput').value.trim().replace(/^@/, '');
-  if (!val) { showToast('Please enter a username'); return; }
-  currentUsername = val;
-  try { localStorage.setItem('pond_username', val); } catch(e) {}
-  document.getElementById('adminUsernamePreview').innerHTML = 'Displayed as: <strong>@' + val + '</strong>';
-  showToast('Username saved');
-}
+      function step() {
+        const chunk = 50;
+        for (let i = 0; i < chunk && batch.length < target; i++) {
+          attempts++;
+          const fn = rnd(STRUCTURES);
+          let text = fn().replace('{e}', Math.random() > 0.3 ? rnd(EMOJIS) : '').trim();
+          text = text.replace(/\s+/g, ' ');
+          if (!seen.has(text)) { seen.add(text); batch.push({ text, tone: rnd(TONES) }); }
+          if (attempts > target * 20) break;
+        }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-let posts    = [];
-const POSTS_KEY = 'pond_posts';
+        const pct = Math.min(95, Math.round((batch.length / target) * 95));
+        bar.style.width = pct + '%';
 
-function loadLocalData() {
-  try { const p = localStorage.getItem(POSTS_KEY); if (p) posts = JSON.parse(p); } catch(e) {}
-}
+        if (batch.length < target && attempts <= target * 20) {
+          setTimeout(step, 0);
+        } else {
+          pool = pool.concat(batch);
+          bar.style.width = '100%';
+          setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 500);
+          updateStats();
+          document.getElementById('btn-pick').disabled = false;
+          document.getElementById('gen-status').textContent = 'Batch ' + batchNum + ' done — ' + batch.length + ' comments added';
+          btn.disabled = false;
+          btn.textContent = '✨ Generate 500 more';
+          generating = false;
+        }
+      }
 
-function saveLocalData() {
-  try { localStorage.setItem(POSTS_KEY, JSON.stringify(posts)); } catch(e) {}
-}
-
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXckhN1doposNCtIuCH82aWSJvzrtPCXiZrW97FxMtjkXcEeyo3Eu5UJEyHMXezr0cg/exec';
-
-async function loadFromScript() {
-  if (!APPS_SCRIPT_URL) { loadLocalData(); generatePosts(); return; }
-  try {
-    const rp = await fetch(APPS_SCRIPT_URL + '?type=posts');
-    const dp = await rp.json();
-    if (dp.ok && Array.isArray(dp.posts)) {
-      posts = dp.posts.map(p => ({
-        ...p,
-        username:       p.username || '',
-        focused:        p.focused === 'TRUE' || p.focused === true,
-        likes:          parseInt(p.likes)    || 0,
-        comments:       parseInt(p.comments) || 0,
-        shares:         parseInt(p.shares)   || 0,
-        requireLike:    p.requireLike    === 'TRUE' || p.requireLike    === true,
-        requireComment: p.requireComment === 'TRUE' || p.requireComment === true,
-        requireShare:   p.requireShare   === 'TRUE' || p.requireShare   === true,
-        requireSave:    p.requireSave    === 'TRUE' || p.requireSave    === true,
-        goalLikes:    parseInt(p.goalLikes)    || 0,
-        goalComments: parseInt(p.goalComments) || 0,
-        goalShares:   parseInt(p.goalShares)   || 0,
-      }));
-      saveLocalData();
-    }
-  } catch(err) { loadLocalData(); }
-  generatePosts();
-}
-
-async function upsertPostToScript(post) {
-  saveLocalData();
-  if (!APPS_SCRIPT_URL) return;
-  try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'upsertPost', post })
-    });
-  } catch(e) { console.error('upsertPost failed', e); }
-}
-
-async function deletePostFromScript(id) {
-  saveLocalData();
-  if (!APPS_SCRIPT_URL) return;
-  try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'deletePost', id })
-    });
-  } catch(e) { console.error('deletePost failed', e); }
-}
-
-async function saveToScript() {
-  saveLocalData();
-  if (!APPS_SCRIPT_URL) return;
-  try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'savePosts', posts })
-    });
-  } catch(e) { console.error('saveToScript failed', e); }
-}
-
-// ─── Filter helpers ──────────────────────────────────────────────────────────
-function getFilteredPosts() {
-  return posts
-    .filter(p => {
-      if (currentPlatform !== 'all' && p.platform !== currentPlatform) return false;
-      if (pageFilter === 'all') return true;
-      if (pageFilter === 'focus') return !!p.focused;
-      return p.post_type === pageFilter || p.type === pageFilter;
-    })
-    .sort((a, b) => {
-      if (a.focused && !b.focused) return -1;
-      if (!a.focused && b.focused) return 1;
-      const aName = getPostUsername(a) || '';
-      const bName = getPostUsername(b) || '';
-      const cmp = aName.localeCompare(bName, 'th', { sensitivity: 'base', numeric: true });
-      if (cmp !== 0) return cmp;
-      const aT = new Date(a.time || a.post_time || a.createdAt || a.created_at || 0).getTime();
-      const bT = new Date(b.time || b.post_time || b.createdAt || b.created_at || 0).getTime();
-      if (aT !== bT) return bT - aT;
-      return (a.id || 0) > (b.id || 0) ? -1 : 1;
-    });
-}
-
-// ─── Progress tracker ────────────────────────────────────────────────────────
-function updateProgressTracker() {
-  const filtered = getFilteredPosts();
-
-  const items = [
-    { key:'liked',     chipId:'chip-liked',     countId:'chipCount-liked' },
-    { key:'commented', chipId:'chip-commented', countId:'chipCount-commented' },
-    { key:'shared',    chipId:'chip-shared',    countId:'chipCount-shared' },
-    { key:'saved',     chipId:'chip-saved',     countId:'chipCount-saved' },
-  ];
-
-  let doneSum = 0;
-  let totalTasks = 0;
-  items.forEach(({ key, chipId, countId }) => {
-    const chip = document.getElementById(chipId);
-    if (!chip) return;
-    const requiringPosts = filtered.filter(p => getRequired(p)[key]);
-    const totalN = requiringPosts.length;
-    const doneN  = requiringPosts.reduce((n, p) => n + ((getState(p.id)[key] > 0) ? 1 : 0), 0);
-    doneSum    += doneN;
-    totalTasks += totalN;
-    const allDone = totalN > 0 && doneN === totalN;
-    chip.classList.toggle('done', allDone);
-    chip.style.opacity = totalN === 0 ? '0.4' : '';
-    const countEl = document.getElementById(countId);
-    if (countEl) countEl.innerHTML = doneN + '<span class="chip-count-total">/' + totalN + '</span>';
-  });
-
-  const pct = totalTasks ? Math.round((doneSum / totalTasks) * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressPct').innerHTML = pct + '<span>%</span>';
-  document.getElementById('progressCompleteMsg').classList.toggle('visible', pct === 100 && totalTasks > 0);
-
-
-}
-
-// ─── HTML builders ───────────────────────────────────────────────────────────
-function getMediaContent(post) {
-  const img = post?.image || post?.image_url;
-  if (img) return `<img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'">`;
-  return icons.camera;
-}
-
-function focusBannerHTML(post) {
-  return post?.focused ? '<div class="focus-banner">Focus Post — Like, Comment, Share & Save!</div>' : '';
-}
-
-function cardChecklistHTML(postId, post) {
-  const s = getState(postId);
-  const postUrl = post?.post_url || post?.postUrl || '';
-  const req = getRequired(post);
-  const allItems = [
-    { key:'liked',     icon:icons.heart,    label:'Like',    handler:`onclick="checklistAction('${postId}','liked')"` },
-    { key:'commented', icon:icons.comment,  label:'Comment', handler:`onclick="checklistCommentClick('${postId}')"` },
-    { key:'shared',    icon:icons.share,    label:'Share',   handler:`onclick="checklistShareClick('${postId}')"` },
-    { key:'saved',     icon:icons.bookmark, label:'Save',    handler:`onclick="checklistAction('${postId}','saved')"` },
-  ];
-  const items = allItems.filter(i => req[i.key]);
-  const doneCount = items.filter(i => (s[i.key]||0) > 0).length;
-  const totalEngagements = items.reduce((n,i) => n + (s[i.key]||0), 0);
-  const pct = Math.round((doneCount / (items.length || 1)) * 100);
-  const allDone = doneCount === items.length && items.length > 0;
-
-  const isFocus = !!post?.focused;
-  const chips = items.map(item => {
-    const count = s[item.key] || 0;
-    const done = count > 0;
-    // Focus posts: Like & Save are one-time. Once done, lock them. Only Comment/Share can be re-engaged.
-    const locked = isFocus && done && (item.key === 'liked' || item.key === 'saved');
-    const labelText = count > 0 ? `${item.label} ×${count}` : item.label;
-    const handler = locked ? '' : item.handler;
-    const cursor = locked ? 'default' : 'pointer';
-    const title = locked ? 'Already done' : 'Tap to engage again';
-    return `<div class="card-check-item ${done?'done':''}${locked?' locked':''}" id="cci-${item.key}-${postId}" ${handler} style="cursor:${cursor}" title="${title}">
-      <div class="cci-tick">${done?'✓':''}</div>
-      <span class="cci-icon">${item.icon}</span>
-      <span class="cci-label">${labelText}</span>
-    </div>`;
-  }).join('');
-
-  const openLinkBtn = postUrl
-    ? `<a href="${postUrl}" target="_blank" rel="noopener" style="font-size:10px;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:3px;text-decoration:none;letter-spacing:0.05em">${icons.extLink} Open Post</a>`
-    : '';
-
-  const summary = allDone
-    ? `<div class="card-checklist-summary all-done-bar"><span class="checklist-summary-text">${totalEngagements} total engagements — keep going!</span><div class="checklist-mini-bar"><div class="checklist-mini-fill" style="width:100%"></div></div></div>`
-    : `<div class="card-checklist-summary"><span class="checklist-summary-text">${doneCount}/${items.length} started (${pct}%)</span><div style="display:flex;align-items:center;gap:8px">${openLinkBtn}<div class="checklist-mini-bar"><div class="checklist-mini-fill" style="width:${pct}%"></div></div></div></div>`;
-
-  return `<div id="cklwrap-${postId}"><div class="card-checklist" id="ccl-${postId}">${chips}</div>${summary}</div>`;
-}
-
-function refreshChecklist(postId) {
-  const wrap = document.getElementById('cklwrap-' + postId);
-  if (!wrap) return;
-  const filtered = getFilteredPosts();
-  const post = filtered.find(p => p.id === postId) || null;
-  wrap.outerHTML = cardChecklistHTML(postId, post);
-}
-
-function buildFocused(idx) {
-  const filtered = getFilteredPosts();
-  const post = filtered[idx];
-  if (!post) return '';
-  const platform = currentPlatform === 'all' ? (post.platform || 'ig') : currentPlatform;
-  const postId = post.id;
-  const state = getState(postId);
-  const postUrl = post?.post_url || post?.postUrl || '';
-
-  if (platform === 'ig') {
-    const mediaLabel = post.mediaType || post.media_type ? (MEDIA_LABELS[post.mediaType||post.media_type]||post.mediaType||post.media_type) : '';
-    return `
-      <div class="ig-card" data-post-id="${postId}">
-        ${focusBannerHTML(post)}
-        <div class="ig-card-header">
-          <div class="avatar">P</div>
-          <div>
-            <div class="ig-username">@${getPostUsername(post)}</div>
-            ${post.focused ? '<div style="margin-top:2px"><span style="font-size:10px;background:var(--gold);color:#fff;padding:1px 6px;border-radius:40px;font-weight:700">Focus</span></div>' : ''}
-            <div class="ig-location">Milan, Italy${mediaLabel ? ' · ' + mediaLabel : ''}</div>
-            ${post.label ? `<div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:2px">${post.label}</div>` : ''}
-          </div>
-          <button class="ig-more" ${postUrl?`onclick="window.open('${postUrl}','_blank','noopener')" title="Open original post"`:''}>${postUrl ? icons.extLink : '···'}</button>
-        </div>
-        <div class="media-frame" ${postUrl?`onclick="window.open('${postUrl}','_blank','noopener')"`:''}>${getMediaContent(post)}</div>
-        <div class="ig-actions">
-          <button class="ig-action-btn ${state.liked?'liked':''}" id="likeBtn-${postId}" data-iconset="heart-fill" onclick="toggleLike('${postId}',this)" title="Like">
-            <span class="action-icon">${state.liked ? icons.heartFilled : icons.heart}</span>
-          </button>
-          <button class="ig-action-btn" onclick="openCommentModal('${postId}')" title="Comment">${icons.comment}</button>
-          <button class="ig-action-btn" onclick="openShareModal('${postId}')"   title="Share">${icons.share}</button>
-          <button class="ig-action-btn ig-save ${state.saved?'saved':''}" id="saveBtn-${postId}" onclick="toggleSave('${postId}',this)" title="Save">
-            ${state.saved ? icons.bookmarkFilled : icons.bookmark}
-          </button>
-        </div>
-        ${post.likes ? `<div class="ig-likes">${formatNum(post.likes)} likes</div>` : ''}
-        ${cardChecklistHTML(postId, post)}
-      </div>`;
-  }
-
-  if (platform === 'twitter') {
-    return `
-      <div class="tw-card" data-post-id="${postId}">
-        ${focusBannerHTML(post)}
-        <div class="tw-header">
-          <div class="avatar">P</div>
-          <div class="tw-info">
-            <div class="tw-name">@${getPostUsername(post)}</div>
-          </div>
-        </div>
-        <div class="media-frame media-frame-wide" ${postUrl?`onclick="window.open('${postUrl}','_blank','noopener')"`:''}>${getMediaContent(post)}</div>
-        <div class="tw-actions">
-          <button class="tw-action" onclick="openCommentModal('${postId}')" title="Comment">${icons.msgCircle}${post.comments ? `<span>${formatNum(post.comments)}</span>` : ''}</button>
-          <button class="tw-action" onclick="openShareModal('${postId}')" title="Share">${icons.repeat}${post.shares ? `<span>${formatNum(post.shares)}</span>` : ''}</button>
-          <button class="tw-action${state.liked?' liked':''}" id="likeBtn-${postId}" onclick="toggleLike('${postId}',this)" title="Like"><span class="action-icon">${icons.heart}</span>${post.likes ? `<span>${formatNum(post.likes)}</span>` : ''}</button>
-        </div>
-        ${cardChecklistHTML(postId, post)}
-      </div>`;
-  }
-
-  if (platform === 'fb') {
-    return `
-      <div class="fb-card" data-post-id="${postId}">
-        ${focusBannerHTML(post)}
-        <div class="fb-header">
-          <div class="avatar">P</div>
-          <div>
-            <div class="fb-user">@${getPostUsername(post)}</div>
-            <div class="fb-time">Public</div>
-          </div>
-        </div>
-        <div class="media-frame" style="aspect-ratio:1.4/1" ${postUrl?`onclick="window.open('${postUrl}','_blank','noopener')"`:''}>${getMediaContent(post)}</div>
-        ${(post.likes || post.comments || post.shares) ? `<div class="fb-reactions" style="padding:6px 11px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">${post.likes ? formatNum(post.likes) + ' reactions' : ''}${post.comments ? (post.likes ? ' · ' : '') + formatNum(post.comments) + ' comments' : ''}${post.shares ? ((post.likes || post.comments) ? ' · ' : '') + formatNum(post.shares) + ' shares' : ''}</div>` : ''}
-        <div class="fb-actions">
-          <button class="fb-act${state.liked?' liked':''}" id="likeBtn-${postId}" onclick="toggleLike('${postId}',this)"><span class="action-icon">${icons.thumbup}</span> Like</button>
-          <button class="fb-act" onclick="openCommentModal('${postId}')">${icons.msgCircle} Comment</button>
-          <button class="fb-act" onclick="openShareModal('${postId}')">${icons.shareArrow} Share</button>
-        </div>
-        ${cardChecklistHTML(postId, post)}
-      </div>`;
-  }
-
-  if (platform === 'youtube') {
-    return `
-      <div class="yt-card" data-post-id="${postId}">
-        ${focusBannerHTML(post)}
-        <div class="media-frame media-frame-wide" ${postUrl?`onclick="window.open('${postUrl}','_blank','noopener')"`:''}>${getMediaContent(post)}</div>
-        <div class="yt-info">
-          <div class="yt-title">${post.label || post.caption || ''}</div>
-          <div class="yt-meta">${post.likes ? formatNum(post.likes) + ' views' : ''}</div>
-        </div>
-        <div class="yt-actions">
-          <button class="yt-action${state.liked?' liked':''}" id="likeBtn-${postId}" onclick="toggleLike('${postId}',this)" title="Like"><span class="action-icon">${icons.thumbup}</span></button>
-          <button class="yt-action" onclick="openCommentModal('${postId}')" title="Comment">${icons.msgCircle}</button>
-          <button class="yt-action" onclick="openShareModal('${postId}')" title="Share">${icons.shareArrow} <span>Share</span></button>
-        </div>
-        ${cardChecklistHTML(postId, post)}
-      </div>`;
-  }
-
-  if (platform === 'tiktok') {
-    return `
-      <div class="tk-card" data-post-id="${postId}">
-        ${focusBannerHTML(post)}
-        <div class="media-frame media-frame-tall" ${postUrl?`onclick="window.open('${postUrl}','_blank','noopener')"`:''}>${getMediaContent(post)}
-          <div class="play-overlay">${icons.play}</div>
-          <div class="tk-overlay" style="justify-content:space-between;align-items:flex-end">
-            <div class="tk-left">
-              <div class="tk-username">@${getPostUsername(post)}</div>
-              ${post.label ? `<div class="tk-desc">${post.label}</div>` : ''}
-            </div>
-            <div class="tk-right">
-              <button class="tk-btn${state.liked?' liked':''}" id="likeBtn-${postId}" onclick="toggleLike('${postId}',this)" title="Like"><span class="action-icon">${icons.heart}</span>${post.likes ? `<span>${formatNum(post.likes)}</span>` : ''}</button>
-              <button class="tk-btn" onclick="openCommentModal('${postId}')" title="Comment">${icons.comment}${post.comments ? `<span>${formatNum(post.comments)}</span>` : ''}</button>
-              <button class="tk-btn" onclick="openShareModal('${postId}')" title="Share">${icons.shareArrow}${post.shares ? `<span>${formatNum(post.shares)}</span>` : ''}</button>
-              <div class="tk-btn">${icons.music}</div>
-            </div>
-          </div>
-        </div>
-        ${cardChecklistHTML(postId, post)}
-      </div>`;
-  }
-  return '';
-}
-
-// ─── Build thumb card ────────────────────────────────────────────────────────
-function buildThumb(post, globalIdx) {
-  if (!post) return '';
-  const postId = post.id;
-  const s = getState(postId);
-  const req = getRequired(post);
-  const totalCount = Object.keys(req).reduce((n,k) => n + (req[k] ? (s[k]||0) : 0), 0);
-  const isFocus = !!post.focused;
-  const reqKeys = ['liked','commented','shared','saved'].filter(k => req[k]);
-  const isCompleted = reqKeys.length > 0 && reqKeys.every(k => (s[k]||0) > 0);
-  const platLabel = { ig:'IG', twitter:'X', fb:'FB', youtube:'YT', tiktok:'TT' }[post.platform||'ig'] || 'IG';
-  const mediaLabel = (post.mediaType||post.media_type||'photo').toUpperCase();
-  const uname = getPostUsername(post);
-  const starEl = isFocus ? `<span class="thumb-mini-star">★</span>` : '';
-  const newEl  = isNewPost(post) ? `<span class="thumb-mini-new">NEW</span>` : '';
-  const doneEl = (isFocus && totalCount > 0) ? `<span class="thumb-mini-done">✓ ×${totalCount}</span>` : '';
-  const checkEl = (!isFocus && isCompleted) ? `<span class="thumb-mini-check">✓</span>` : '';
-
-  const img = post && (post.image || post.image_url);
-  const avatarInner = img
-    ? `<img src="${img}" onerror="this.style.display='none'">`
-    : uname.charAt(0).toUpperCase();
-
-  return `
-    <div class="thumb-item${isFocus?' focus-thumb':''}${(!isFocus && isCompleted)?' completed':''}"
-         onclick="selectPost(${globalIdx})">
-      <div class="thumb-avatar">${avatarInner}</div>
-      <div class="thumb-text-block">
-        <div class="thumb-info-user">${platLabel} · @${uname}</div>
-        <div class="thumb-chip-row">
-          <span class="thumb-info-type">${mediaLabel}</span>
-          <span class="thumb-chip-spacer"></span>
-          ${starEl}${newEl}${doneEl}${checkEl}
-        </div>
-      </div>
-
-    </div>`;
-}
-
-// ─── Generate posts — grid-first, split focus vs others ──────────────────────
-function updateFilterCounts() {
-  const base = posts.filter(p => currentPlatform === 'all' || p.platform === currentPlatform);
-  const counts = {
-    Focus:    base.filter(p => !!p.focused).length,
-    Airport:  base.filter(p => (p.post_type || p.type) === 'airport').length,
-    Preday:   base.filter(p => (p.post_type || p.type) === 'preday').length,
-    Dayevent: base.filter(p => (p.post_type || p.type) === 'dayevent').length,
-    After:    base.filter(p => (p.post_type || p.type) === 'after').length,
-  };
-  const labels = { Focus:'Focus', Airport:'Airport', Preday:'Pre-Day', Dayevent:'Day Event', After:'After' };
-  Object.keys(labels).forEach(key => {
-    const el = document.getElementById('pf' + key);
-    if (el) el.textContent = `${labels[key]} (${counts[key]})`;
-  });
-}
-
-function generatePosts() {
-  const filtered = getFilteredPosts();
-  updateFilterCounts();
-
-  const focusedWrap = document.getElementById('focusedWrap');
-  const focusGrid   = document.getElementById('focusGrid');
-  const tg          = document.getElementById('thumbGrid');
-  const divider     = document.getElementById('moreDivider');
-  const gridLabel   = document.getElementById('gridLabel');
-
-  if (filtered.length === 0) {
-    focusedWrap.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">${icons.camera}</div>
-        <div class="empty-state-text">No posts yet</div>
-        <div class="empty-state-sub">Posts added by admin will appear here</div>
-      </div>`;
-    focusGrid.innerHTML = '';
-    tg.innerHTML = '';
-    divider.style.display   = 'none';
-    gridLabel.style.display = 'none';
-    document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('progressPct').innerHTML = '0<span>%</span>';
-    document.getElementById('progressCompleteMsg').classList.remove('visible');
-    return;
-  }
-
-  // ── Focused card view (single post expanded) ──
-  if (focusedIndex !== null && focusedIndex !== undefined) {
-    if (focusedIndex >= filtered.length) focusedIndex = 0;
-
-    focusedWrap.innerHTML = `<button class="back-to-grid" onclick="backToGrid()">← All Posts</button>` + buildFocused(focusedIndex);
-
-    // Show all other posts as small thumbs below
-    const focusPosts  = filtered.filter((p, i) => p.focused && i !== focusedIndex);
-    const otherPosts  = filtered.filter((p, i) => !p.focused && i !== focusedIndex);
-    const hasOthers   = focusPosts.length + otherPosts.length > 0;
-
-    if (focusPosts.length) {
-      focusGrid.innerHTML =
-        `<div class="section-row-label"><span>★ Focus Posts</span></div>` +
-        focusPosts.map(p => buildThumb(p, filtered.indexOf(p))).join('');
-    } else {
-      focusGrid.innerHTML = '';
+      setTimeout(step, 50);
     }
 
-    if (otherPosts.length) {
-      tg.innerHTML =
-        `<div class="other-section-label"><span>All Posts</span></div>` +
-        otherPosts.map(p => buildThumb(p, filtered.indexOf(p))).join('');
-    } else {
-      tg.innerHTML = '';
+    function updateStats() {
+      document.getElementById('pool-count').textContent = pool.length.toLocaleString();
+      document.getElementById('pick-count').textContent = pickCount;
+      document.getElementById('remain-count').textContent = (pool.length - used.size).toLocaleString();
     }
 
-    divider.style.display   = hasOthers ? 'flex' : 'none';
-    gridLabel.style.display = 'none';
-    updateProgressTracker();
-    return;
-  }
+    function pick() {
+      if (!pool.length) return;
+      if (used.size >= pool.length) used.clear();
+      let idx;
+      do { idx = Math.floor(Math.random() * pool.length); } while (used.has(idx));
+      used.add(idx);
+      selected = pool[idx];
+      pickCount++;
 
-  // ── Grid-only view: split focus vs other ──
-  focusedWrap.innerHTML = '';
-
-  const focusPosts = filtered.filter(p => p.focused);
-  const otherPosts = filtered.filter(p => !p.focused);
-
-  // Shared completion check (used to drop done posts to the bottom)
-  const isPostCompleted = (p) => {
-    const s = getState(p.id);
-    const r = getRequired(p);
-    const keys = ['liked','commented','shared','saved'].filter(k => r[k]);
-    return keys.length > 0 && keys.every(k => (s[k]||0) > 0);
-  };
-
-  if (focusPosts.length) {
-    const sortedFocus = focusPosts.slice().sort((a, b) => {
-      return (isPostCompleted(a) ? 1 : 0) - (isPostCompleted(b) ? 1 : 0);
-    });
-    focusGrid.innerHTML =
-      `<div class="section-row-label"><span>★ Focus Posts — Engage First!</span></div>` +
-      sortedFocus.map(p => buildThumb(p, filtered.indexOf(p))).join('');
-  } else {
-    focusGrid.innerHTML = '';
-  }
-
-  if (otherPosts.length) {
-    const labelHTML = focusPosts.length
-      ? `<div class="other-section-label"><span>Other Posts</span></div>`
-      : '';
-    const sortedOthers = otherPosts.slice().sort((a, b) => {
-      return (isPostCompleted(a) ? 1 : 0) - (isPostCompleted(b) ? 1 : 0);
-    });
-    tg.innerHTML = labelHTML + sortedOthers.map(p => buildThumb(p, filtered.indexOf(p))).join('');
-  } else {
-    tg.innerHTML = '';
-  }
-
-  divider.style.display   = 'none';
-  gridLabel.style.display = filtered.length ? 'block' : 'none';
-  gridLabel.textContent   = 'Select a post to support';
-
-  updateProgressTracker();
-}
-
-function selectPost(idx) {
-  focusedIndex = idx;
-  const filtered = getFilteredPosts();
-  const p = filtered[idx];
-  if (p) markSeen(p.id);
-  generatePosts();
-  const focusedWrap = document.getElementById('focusedWrap');
-  if (focusedWrap) focusedWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function backToGrid() {
-  focusedIndex = null;
-  generatePosts();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ─── Platform / Filter ───────────────────────────────────────────────────────
-function setPlatform(p) {
-  currentPlatform = p;
-  focusedIndex = null;
-  const _pl=document.getElementById('platformLabel');
-  _pl.textContent = platformNames[p];
-  _pl.style.display = (p === 'all') ? 'none' : '';
-  const tabAll = document.getElementById('tabAll');
-  if (tabAll) tabAll.classList.toggle('active', p === 'all');
-  const tabMap = { ig:'IG', twitter:'TW', fb:'FB', youtube:'YT', tiktok:'TK' };
-  ['IG','TW','FB','YT','TK'].forEach(k => document.getElementById('tab'+k).classList.toggle('active', tabMap[p] === k));
-  generatePosts();
-}
-
-function setPageFilter(f) {
-  pageFilter = (pageFilter === f) ? 'all' : f;
-  focusedIndex = null;
-  ['Focus','Airport','Preday','Dayevent','After'].forEach(k => {
-    const el = document.getElementById('pf'+k);
-    if (el) el.classList.toggle('active', pageFilter === k.toLowerCase());
-  });
-  generatePosts();
-}
-
-// ─── Like / Save ─────────────────────────────────────────────────────────────
-function syncHeaderButtons(postId) {
-  const s = getState(postId);
-  const likeBtn = document.getElementById('likeBtn-' + postId);
-  if (likeBtn) {
-    likeBtn.classList.toggle('liked', !!s.liked);
-    if (likeBtn.dataset.iconset === 'heart-fill') {
-      const slot = likeBtn.querySelector('.action-icon');
-      if (slot) slot.innerHTML = s.liked ? icons.heartFilled : icons.heart;
+      const el = document.getElementById('result');
+      el.classList.remove('animate-in');
+      void el.offsetWidth;
+      el.textContent = selected.text;
+      el.className = 'comment-text active animate-in';
+      document.getElementById('qmark').style.display = 'block';
+      document.getElementById('tag-tone').textContent = selected.tone;
+      document.getElementById('tag-tone').className = 'tag on';
+      document.getElementById('tag-num').textContent = '#' + pickCount;
+      document.getElementById('tag-num').className = 'tag on';
+      document.getElementById('copy-btn').classList.add('show');
+      document.getElementById('copy-label').textContent = 'Copy with hashtags';
+      updateStats();
     }
-  }
-  const saveBtn = document.getElementById('saveBtn-' + postId);
-  if (saveBtn) {
-    saveBtn.classList.toggle('saved', !!s.saved);
-    saveBtn.innerHTML = s.saved ? icons.bookmarkFilled : icons.bookmark;
-  }
-}
-function isFocusPost(postId) {
-  const p = posts.find(x => x.id === postId);
-  return !!(p && p.focused);
-}
-function toggleLike(postId, btn) {
-  const s = getState(postId);
-  if (isFocusPost(postId) && (s.liked||0) > 0) { showToast('Already liked'); return; }
-  s.liked = (s.liked || 0) + 1;
-  saveStates();
-  syncHeaderButtons(postId);
-  spawnConfetti();
-  showToast('Liked! (×' + s.liked + ')');
-  updateProgressTracker(); refreshChecklist(postId); checkAllDone(postId);
-}
-function toggleSave(postId, btn) {
-  const s = getState(postId);
-  if (isFocusPost(postId) && (s.saved||0) > 0) { showToast('Already saved'); return; }
-  s.saved = (s.saved || 0) + 1;
-  saveStates();
-  syncHeaderButtons(postId);
-  showToast('Saved! (×' + s.saved + ')');
-  updateProgressTracker(); refreshChecklist(postId); checkAllDone(postId);
-}
 
-// Generic counter for the in-card checklist (Like & Save use this directly).
-// Tapping always adds +1 — the count shown is how many times you've engaged.
-function checklistAction(postId, key) {
-  const s = getState(postId);
-  if (isFocusPost(postId) && (key === 'liked' || key === 'saved') && (s[key]||0) > 0) {
-    showToast(key === 'liked' ? 'Already liked' : 'Already saved');
-    return;
-  }
-  s[key] = (s[key] || 0) + 1;
-  saveStates();
-  syncHeaderButtons(postId);
-  if (key === 'liked') { spawnConfetti(); showToast('Liked! (×' + s.liked + ')'); }
-  if (key === 'saved')  { showToast('Saved! (×' + s.saved + ')'); }
-  updateProgressTracker(); refreshChecklist(postId); checkAllDone(postId);
-}
+    const HASHTAGS = '#PradaSS27xPond #ppnaravit #PradaSS27 #Prada #PondNaravit';
 
-// Comment checklist item: always opens the picker so you can grab a fresh comment.
-function checklistCommentClick(postId) {
-  openCommentModal(postId);
-}
-
-// Share checklist item: always copies the link again and bumps the counter.
-function checklistShareClick(postId) {
-  openShareModal(postId);
-}
-
-const celebratedPosts = new Set();
-function checkAllDone(postId) {
-  if (!isAllDone(postId)) return;
-  if (celebratedPosts.has(postId)) return;
-  celebratedPosts.add(postId);
-  showToast('All required actions covered — keep engaging! ✨');
-  spawnConfetti();
-}
-
-// ─── Comment Modal (Prada SS27 Comment Picker — full port) ─────────────────
-const COMMENT_TONES = ["Praising Prada","Adoring Pond","Grateful Fan","Brand Love","Pure Pride","Emotional","Iconic Moment"];
-const COMMENT_EMOJIS = ["🖤","✨","🔥","🇹🇭","🇮🇹","💫","👑","🙌","💯","😍","🌍","🫶","🙏","💕","🤍","🖤✨","🇹🇭✨","💯🖤","👑✨","🙏🖤","🔥🖤","✨🇹🇭","🌟","💎","🫰"];
-const PRADA_PRAISE = [
-  "Prada has always defined what luxury means",
-  "Prada's legacy speaks for itself",
-  "The house of Prada sets the standard every season",
-  "Prada's vision is unlike anything else in fashion",
-  "No brand carries prestige quite like Prada",
-  "Prada continues to lead the fashion world with grace",
-  "Prada's craftsmanship and taste are second to none",
-  "The Prada universe is one of elegance and intention",
-  "Prada has always understood true sophistication",
-  "The brilliance of Prada never stops inspiring us",
-  "Prada remains the pinnacle of Italian fashion excellence",
-  "There is a reason the whole world looks to Prada every season",
-  "Prada's eye for beauty is simply unmatched",
-  "Prada proves season after season why they are the greatest",
-  "The world of Prada is built on excellence and nothing less",
-];
-const POND_PRAISE = [
-  "Pond Naravit is everything a fashion icon should be",
-  "Pond Naravit carries himself with an elegance that is rare and real",
-  "The presence of Pond Naravit is impossible to ignore",
-  "Pond Naravit radiates a charm that the camera simply cannot contain",
-  "Pond Naravit is the definition of effortless grace",
-  "There is something magnetic about Pond Naravit that draws every eye",
-  "Pond Naravit's beauty goes far beyond what words can describe",
-  "Pond Naravit belongs in the highest rooms of fashion and tonight proved it",
-  "The elegance Pond Naravit brings is timeless and extraordinary",
-  "Pond Naravit made every single moment at Milan unforgettable",
-  "Pond Naravit is not just handsome — he is a genuine icon",
-  "The world is finally seeing what Thailand has always known about Pond Naravit",
-  "Pond Naravit's style, grace, and presence are on another level entirely",
-  "Watching Pond Naravit at Milan Fashion Week is watching greatness in motion",
-  "Pond Naravit is the kind of person that fashion was invented for",
-];
-const GRATITUDE = [
-  "thank you Prada for choosing Pond Naravit",
-  "thank you Prada for seeing what we see in Pond Naravit",
-  "thank you Prada for giving Pond Naravit this stage",
-  "thank you Prada for inviting Pond Naravit to SS27",
-  "thank you Prada for recognizing that Pond Naravit belongs here",
-  "thank you Prada for making this dream real for Pond Naravit and all of us",
-  "thank you Prada for placing Pond Naravit exactly where he deserves to be",
-  "we are so grateful to Prada for choosing Pond Naravit for SS27 Milan",
-  "Prada we thank you from the bottom of our hearts for Pond Naravit",
-  "from every fan: thank you Prada for believing in Pond Naravit",
-];
-const LOCATION = [
-  "at Prada SS27 Milan","at Milan Fashion Week SS27","at the Prada SS27 show in Milan",
-  "on the front row at Prada Milan","at Prada Milan Fashion Week","at SS27 in Milan",
-  "at the Prada show in Milan","at Prada SS27",
-];
-function _crnd(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function _ccap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
-const COMMENT_STRUCTURES = [
-  () => `${_crnd(PRADA_PRAISE)} — and ${_crnd(GRATITUDE)} ${_crnd(LOCATION)} {e}`,
-  () => `${_crnd(POND_PRAISE)} ${_crnd(LOCATION)} — ${_crnd(GRATITUDE)} {e}`,
-  () => `${_ccap(_crnd(GRATITUDE))} ${_crnd(LOCATION)}. ${_crnd(POND_PRAISE)} {e}`,
-  () => `${_crnd(PRADA_PRAISE)}, and Pond Naravit proved it ${_crnd(LOCATION)} — ${_crnd(GRATITUDE)} {e}`,
-  () => `${_crnd(POND_PRAISE)}. ${_ccap(_crnd(GRATITUDE))} ${_crnd(LOCATION)} {e}`,
-  () => `Dear Prada: ${_crnd(GRATITUDE)} ${_crnd(LOCATION)}. ${_crnd(POND_PRAISE)} {e}`,
-  () => `${_crnd(PRADA_PRAISE)}. That is why we ${_crnd(GRATITUDE)} ${_crnd(LOCATION)} {e}`,
-  () => `We are in awe of Pond Naravit ${_crnd(LOCATION)}, and ${_crnd(GRATITUDE)} for this moment {e}`,
-  () => `${_ccap(_crnd(GRATITUDE))} ${_crnd(LOCATION)}. The world now sees that ${_crnd(POND_PRAISE).toLowerCase()} {e}`,
-  () => `${_crnd(PRADA_PRAISE)}, just as Pond Naravit showed us all ${_crnd(LOCATION)} {e}`,
-];
-
-let commentPool = [];
-let commentUsed = new Set();
-let commentPickCount = 0;
-let cpSelected = null;
-let cpBatchNum = 0;
-let cpGenerating = false;
-
-const CP_HASHTAGS = '@ppnaravit @prada #PradaSS27xPond #ppnaravit #PradaSS27 #Prada #PondNaravit';
-
-function cpUpdateStats(){
-  const pc = document.getElementById('commentPoolCount');
-  const pk = document.getElementById('commentPickedCount');
-  const rm = document.getElementById('cp-remain-count');
-  if (pc) pc.textContent = commentPool.length.toLocaleString();
-  if (pk) pk.textContent = commentPickCount.toLocaleString();
-  if (rm) rm.textContent = (commentPool.length - commentUsed.size).toLocaleString();
-}
-
-function cpGenerateBatch(){
-  if (cpGenerating) return;
-  cpGenerating = true;
-  cpBatchNum++;
-
-  const btn = document.getElementById('cp-btn-gen');
-  btn.disabled = true;
-  btn.textContent = 'Generating…';
-
-  const prog = document.getElementById('cp-progress');
-  const bar = document.getElementById('cp-progress-bar');
-  prog.style.display = 'block';
-  bar.style.width = '5%';
-  document.getElementById('cp-gen-status').textContent = 'Generating batch ' + cpBatchNum + '…';
-
-  const seen = new Set(commentPool.map(c => c.text));
-  const batch = [];
-  let attempts = 0;
-  const target = 500;
-
-  function step(){
-    const chunk = 50;
-    for (let i = 0; i < chunk && batch.length < target; i++){
-      attempts++;
-      const fn = _crnd(COMMENT_STRUCTURES);
-      let text = fn().replace('{e}', '').trim();
-      text = text.replace(/\s+/g, ' ');
-      if (!seen.has(text)){ seen.add(text); batch.push({ text, tone: _crnd(COMMENT_TONES) }); }
-      if (attempts > target * 20) break;
+    // ── Clipboard helper (fixed for mobile & non-secure contexts) ──
+    function legacyCopy(text) {
+      return new Promise(function(resolve) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;opacity:0;pointer-events:none';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, 99999);
+        try { document.execCommand('copy'); } catch(e) { console.warn('execCommand copy failed', e); }
+        document.body.removeChild(ta);
+        resolve();
+      });
     }
-    const pct = Math.min(95, Math.round((batch.length / target) * 95));
-    bar.style.width = pct + '%';
 
-    if (batch.length < target && attempts <= target * 20){
-      setTimeout(step, 0);
-    } else {
-      commentPool = commentPool.concat(batch);
-      bar.style.width = '100%';
-      setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 500);
-      cpUpdateStats();
-      document.getElementById('cp-btn-pick').disabled = false;
-      document.getElementById('cp-gen-status').textContent = 'Batch ' + cpBatchNum + ' done — ' + batch.length + ' comments added';
-      btn.disabled = false;
-      btn.textContent = '✨ Generate 500 more';
-      cpGenerating = false;
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(function() {
+          return legacyCopy(text);
+        });
+      }
+      return legacyCopy(text);
     }
-  }
-  setTimeout(step, 50);
-}
+    // ───────────────────────────────────────────────────────────────
 
-function cpPick(){
-  if (!commentPool.length) return;
-  if (commentUsed.size >= commentPool.length) commentUsed.clear();
-  let idx;
-  do { idx = Math.floor(Math.random() * commentPool.length); } while (commentUsed.has(idx));
-  commentUsed.add(idx);
-  cpSelected = commentPool[idx];
-  commentPickCount++;
-
-  const el = document.getElementById('cp-result');
-  el.classList.remove('cp-animate-in');
-  void el.offsetWidth;
-  el.textContent = cpSelected.text;
-  el.className = 'cp-comment-text active cp-animate-in';
-  document.getElementById('cp-tag-tone').textContent = cpSelected.tone;
-  document.getElementById('cp-tag-tone').className = 'cp-tag on';
-  document.getElementById('cp-tag-num').textContent = '#' + commentPickCount;
-  document.getElementById('cp-tag-num').className = 'cp-tag on';
-  document.getElementById('cp-copy-btn').classList.add('show');
-  document.getElementById('cp-copy-label').textContent = 'Copy with hashtags';
-  cpUpdateStats();
-}
-
-// Clipboard helper (works on mobile / non-secure contexts)
-function cpLegacyCopy(text){
-  return new Promise(function(resolve){
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly','');
-    ta.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;opacity:0;pointer-events:none';
-    document.body.appendChild(ta);
-    ta.focus(); ta.select(); ta.setSelectionRange(0, 99999);
-    try { document.execCommand('copy'); } catch(e){}
-    document.body.removeChild(ta);
-    resolve();
-  });
-}
-function cpCopyText(text){
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    return navigator.clipboard.writeText(text).catch(function(){ return cpLegacyCopy(text); });
-  }
-  return cpLegacyCopy(text);
-}
-
-function cpCopyIt(){
-  if (!cpSelected) return;
-  var full = cpSelected.text + '\n\n' + CP_HASHTAGS;
-  cpCopyText(full).then(function(){
-    document.getElementById('cp-copy-label').textContent = 'Copied!';
-    setTimeout(function(){
-      document.getElementById('cp-copy-label').textContent = 'Copy with hashtags';
-    }, 1800);
-    // bump tracker comment count for the current post
-    if (typeof currentPostId !== 'undefined' && currentPostId){
-      try {
-        const s = getState(currentPostId);
-        s.commented = (s.commented || 0) + 1;
-        saveStates();
-        updateProgressTracker();
-        refreshChecklist(currentPostId);
-        checkAllDone(currentPostId);
-      } catch(e){}
+    function copyIt() {
+      if (!selected) return;
+      var full = selected.text + '\n\n' + HASHTAGS;
+      copyText(full).then(function() {
+        document.getElementById('copy-label').textContent = 'Copied!';
+        setTimeout(function() {
+          document.getElementById('copy-label').textContent = 'Copy with hashtags';
+        }, 1800);
+      });
     }
-    if (typeof showToast === 'function') showToast('Copied! Paste it into the app');
-  });
-}
 
-function cpCopyPill(el, tag){
-  cpCopyText(tag).then(function(){
-    el.classList.add('copied');
-    var orig = el.textContent;
-    el.textContent = '✓ Copied';
-    setTimeout(function(){ el.textContent = orig; el.classList.remove('copied'); }, 1500);
-  });
-}
-function cpCopyAllHashtags(){
-  cpCopyText(CP_HASHTAGS).then(function(){
-    var btn = document.querySelector('#commentModal .cp-copy-all-btn');
-    if (!btn) return;
-    var orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    setTimeout(function(){ btn.textContent = orig; }, 1800);
-  });
-}
+    function copyPill(el, tag) {
+      copyText(tag).then(function() {
+        el.classList.add('copied');
+        var orig = el.textContent;
+        el.textContent = '✓ Copied';
+        setTimeout(function() { el.textContent = orig; el.classList.remove('copied'); }, 1500);
+      });
+    }
 
-function getCurrentFocusedPostId(){
-  const filtered = getFilteredPosts();
-  const post = filtered[focusedIndex] || null;
-  return post ? post.id : null;
-}
-function chipOpenComment(){
-  const id = getCurrentFocusedPostId();
-  if (!id){ showToast('No post selected'); return; }
-  openCommentModal(id);
-}
-function chipOpenShare(){
-  const id = getCurrentFocusedPostId();
-  if (!id){ showToast('No post selected'); return; }
-  openShareModal(id);
-}
-function lockScroll(){ document.body.style.overflow = 'hidden'; }
-function unlockScroll(){ document.body.style.overflow = ''; }
-
-function openCommentModal(postId){
-  currentPostId = postId;
-  document.getElementById('commentModal').style.display = 'flex';
-  cpUpdateStats();
-  // auto-generate first batch if pool is empty
-  if (commentPool.length === 0) cpGenerateBatch();
-  lockScroll();
-}
-function closeCommentModal(){
-  document.getElementById('commentModal').style.display = 'none';
-  currentPostId = null;
-  unlockScroll();
-}
-
-// Back-compat shims for older callsites
-function shuffleCommentOptions(){ cpPick(); }
-function confirmPickedComment(){ cpCopyIt(); closeCommentModal(); }
-function pickComment(){ cpPick(); }
-function randomizeComment(){ cpPick(); }
-function copyAndClose(){ confirmPickedComment(); }
-function setCommentStyle(){ /* no-op */ }
-function ensureCommentPool(){ if (commentPool.length === 0) cpGenerateBatch(); }
-
-// ─── Share ────────────────────────────────────────────────────────────────────
-function openShareModal(postId) {
-  if (navigator.clipboard) navigator.clipboard.writeText(location.href).catch(() => {});
-  if (postId) {
-    const s = getState(postId);
-    s.shared = (s.shared || 0) + 1;
-    saveStates();
-    updateProgressTracker();
-    refreshChecklist(postId);
-    checkAllDone(postId);
-  }
-  showToast('Link copied!');
-}
-
-// ─── Toast & Confetti ────────────────────────────────────────────────────────
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.style.display = 'block';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.style.display = 'none', 2400);
-}
-function spawnConfetti() {
-  const colors = ['#0a0a0a','#b8965a','#d4b07a','#ffffff'];
-  for (let i = 0; i < 14; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-p';
-    p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*30}%;background:${colors[i%4]};border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*0.4}s`;
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 1500);
-  }
-}
-
-// ─── Admin ───────────────────────────────────────────────────────────────────
-let editingId   = null;
-let deletingId  = null;
-let isFocused   = false;
-let selectedImageData = null;
-let adminPlatformFilter = 'all';
-
-const ADMIN_PLATFORM_TABS = [
-  { key:'all',     label:'All' },
-  { key:'ig',      label:'Instagram' },
-  { key:'twitter', label:'Twitter / X' },
-  { key:'fb',      label:'Facebook' },
-  { key:'youtube', label:'YouTube' },
-  { key:'tiktok',  label:'TikTok' },
-];
-
-function setAdminPlatformFilter(p) {
-  adminPlatformFilter = p;
-  renderPosts();
-}
-
-function renderAdminPlatformFilters() {
-  const row = document.getElementById('adminPlatformFilterRow');
-  if (!row) return;
-  row.innerHTML = ADMIN_PLATFORM_TABS.map(tab => {
-    const count = tab.key === 'all' ? posts.length : posts.filter(p => p.platform === tab.key).length;
-    return `<button class="platform-filter-pill${adminPlatformFilter===tab.key?' active':''}" onclick="setAdminPlatformFilter('${tab.key}')">${tab.label} <span class="pf-count">(${count})</span></button>`;
-  }).join('');
-}
-
-function renderPosts() {
-  const list = document.getElementById('postList');
-  renderAdminPlatformFilters();
-  const searchVal = (document.getElementById('adminSearchInput')?.value || '').trim().toLowerCase();
-  let source = adminPlatformFilter === 'all' ? posts : posts.filter(p => p.platform === adminPlatformFilter);
-  if (searchVal) {
-    source = source.filter(p => {
-      const uname = (getPostUsername(p) || '').toLowerCase();
-      const label = (p.label || '').toLowerCase();
-      return uname.includes(searchVal) || label.includes(searchVal);
-    });
-  }
-  const filterActive = !!searchVal || adminPlatformFilter !== 'all';
-  const totalTasks = source.reduce((n, p) => n + requiredCount(p), 0);
-  document.getElementById('postCount').textContent = filterActive
-    ? `${source.length} / ${posts.length} posts`
-    : `${posts.length} posts · ${totalTasks} tasks`;
-
-  if (!posts.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-text">No posts yet</div></div>`;
-    return;
-  }
-  if (!source.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-text">No posts match these filters</div></div>`;
-    return;
-  }
-  const sorted = [...source].sort((a, b) => {
-    return new Date(b.createdAt || b.created_at || 0) - new Date(a.createdAt || a.created_at || 0);
-  });
-  list.innerHTML = sorted.map(p => {
-    const postType = p.post_type || p.type || '';
-    const typeLabel = postType && postType !== 'all' ? postType.charAt(0).toUpperCase() + postType.slice(1) : '';
-    const mediaLabel = MEDIA_LABELS[p.mediaType || p.media_type] || '';
-    return `
-      <div class="post-item${p.focused?' focus-ring':''}">
-        <div class="post-thumb">${(p.image||p.image_url) ? `<img src="${p.image||p.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:2px" onerror="this.outerHTML=''">` : icons.camera}</div>
-        <div class="post-meta">
-          ${p.label ? `<div style="font-size:11px;color:var(--gold);font-weight:600;margin-bottom:2px">${p.label}</div>` : ''}
-          <div class="post-tags">
-            <span class="tag tag-platform">${PLATFORMS[p.platform]||p.platform}</span>
-            ${mediaLabel ? `<span class="tag tag-media">${mediaLabel}</span>` : ''}
-            ${typeLabel  ? `<span class="tag tag-type">${typeLabel}</span>` : ''}
-            ${p.focused  ? `<span class="focus-badge">Focus</span>` : ''}
-          </div>
-          ${(() => { const r = getRequired(p); const labels = [r.liked&&'Like',r.commented&&'Comment',r.shared&&'Share',r.saved&&'Save'].filter(Boolean); return `<div style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0 3px">${labels.length ? labels.map(l => `<span style="font-size:9px;letter-spacing:0.06em;text-transform:uppercase;padding:2px 6px;border-radius:40px;background:#fffbf0;color:var(--gold);border:1px solid rgba(184,150,90,0.3);font-weight:600">${l}</span>`).join('') : '<span style="font-size:10px;color:var(--muted);font-style:italic">No required tasks</span>'}</div>`; })()}
-          ${(() => { const parts = []; if (p.likes) parts.push(`${formatNum(p.likes)} likes`); if (p.comments) parts.push(`${formatNum(p.comments)} comments`); if (p.shares) parts.push(`${formatNum(p.shares)} shares`); if (p.post_url) parts.push(`<a href="${p.post_url}" target="_blank" rel="noopener" style="color:var(--gold)">View post</a>`); return parts.length ? `<div class="post-time">${parts.join(' · ')}</div>` : ''; })()}
-        </div>
-        <div class="post-actions">
-          <button class="icon-btn${p.focused?' star-on':''}" onclick="toggleFocus('${p.id}')" title="${p.focused?'Unset focus':'Set as focus'}">
-            <svg viewBox="0 0 24 24" fill="${p.focused?'var(--gold)':'none'}" stroke="${p.focused?'var(--gold)':'currentColor'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          </button>
-          <button class="icon-btn" onclick="openEditModal('${p.id}')" title="Edit">
-            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-          </button>
-          <button class="icon-btn danger" onclick="openDeleteModal('${p.id}')" title="Delete">
-            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"></path></svg>
-          </button>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function handleImgUrl(val) {
-  const url = val.trim();
-  if (!url) { selectedImageData = null; document.getElementById('urlPreviewWrap').style.display = 'none'; renderPreview(); return; }
-  selectedImageData = url;
-  document.getElementById('urlPreviewImg').src = url;
-  document.getElementById('urlPreviewWrap').style.display = 'block';
-  renderPreview();
-}
-function clearImage() {
-  selectedImageData = null;
-  document.getElementById('fImgUrl').value = '';
-  document.getElementById('urlPreviewWrap').style.display = 'none';
-  renderPreview();
-}
-function resetImagePicker(existingImg) {
-  selectedImageData = existingImg || null;
-  document.getElementById('fImgUrl').value = existingImg || '';
-  if (existingImg) {
-    document.getElementById('urlPreviewImg').src = existingImg;
-    document.getElementById('urlPreviewWrap').style.display = 'block';
-  } else {
-    document.getElementById('urlPreviewWrap').style.display = 'none';
-  }
-}
-
-function toggleFocusPick() {
-  isFocused = !isFocused;
-  setFocusUI(isFocused);
-}
-function setFocusUI(val) {
-  isFocused = !!val;
-  const box  = document.getElementById('focusCheckbox');
-  const row  = document.getElementById('focusToggleRow');
-  const star = document.getElementById('focusStarIcon');
-  if (isFocused) {
-    box.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-    box.style.borderColor = 'var(--gold)'; box.style.background = '#fffbf0';
-    row.style.borderColor = 'var(--gold)'; row.style.background = '#fffbf0';
-    if (star) star.innerHTML = icons.starFilled;
-  } else {
-    box.innerHTML = ''; box.style.borderColor = 'var(--border)'; box.style.background = 'transparent';
-    row.style.borderColor = 'var(--border)'; row.style.background = 'var(--offwhite)';
-    if (star) star.innerHTML = icons.star;
-  }
-}
-
-function renderPreview() {
-  const label    = document.getElementById('fLabel')?.value || '';
-  const username = document.getElementById('fUsername')?.value.trim().replace(/^@/,'') || currentUsername;
-  const platform = document.getElementById('fPlatform')?.value || 'ig';
-  const mediaType= document.getElementById('fMediaType')?.value || 'photo';
-  const preview  = document.getElementById('previewCard');
-  if (!preview) return;
-  const mediaHTML = selectedImageData
-    ? `<img src="${selectedImageData}" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block">`
-    : `<div style="width:100%;aspect-ratio:1/1;background:linear-gradient(145deg,#1a1a1a 0%,#2d2210 55%,var(--gold) 100%);display:flex;align-items:center;justify-content:center">${icons.camera}</div>`;
-  preview.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border)">
-      <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,var(--gold));flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:Inter,system-ui,sans-serif;font-style:normal;font-weight:700;color:#fff;font-size:12px">P</div>
-      <div>
-        <div style="font-size:12px;font-weight:600;color:var(--black)">@${username}</div>
-        ${label ? `<div style="font-size:11px;color:var(--gold);font-weight:600">${label}</div>` : ''}
-      </div>
-      <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
-        <span style="font-size:10px;background:#f0faf4;color:#1a7a44;border:1px solid #b2dfc5;border-radius:40px;padding:2px 6px">${MEDIA_LABELS[mediaType]||mediaType}</span>
-        <span style="font-size:10px;color:var(--muted)">${PLATFORMS[platform]}</span>
-      </div>
-    </div>
-    ${mediaHTML}`;
-}
-
-function toggleFocus(id) {
-  const p = posts.find(x => x.id === id);
-  if (!p) return;
-  p.focused = !p.focused;
-  saveToScript(); renderPosts();
-  showToast(p.focused ? 'Set as focus' : 'Unset focus');
-}
-function openAddModal() {
-  editingId = null;
-  document.getElementById('modalTitle').textContent = 'Add New Post';
-  document.getElementById('fPlatform').value = 'ig';
-  document.getElementById('fMediaType').value = 'photo';
-  document.getElementById('fType').value = 'all';
-  document.getElementById('fLabel').value = '';
-  document.getElementById('fUsername').value = '';
-  document.getElementById('fPostUrl').value = '';
-  document.getElementById('fTime').value = new Date().toISOString().slice(0,16);
-  document.getElementById('fLikes').value = '';
-  document.getElementById('fComments').value = '';
-  document.getElementById('fShares').value = '';
-  setRequiredFields({ liked:true, commented:true, shared:true, saved:true });
-  resetImagePicker(null);
-  setFocusUI(false);
-  renderPreview();
-  document.getElementById('postModal').style.display = 'flex';
-  lockScroll();
-}
-function openEditModal(id) {
-  const p = posts.find(x => x.id === id); if (!p) return;
-  editingId = id;
-  document.getElementById('modalTitle').textContent = 'Edit Post';
-  document.getElementById('fPlatform').value  = p.platform || 'ig';
-  document.getElementById('fMediaType').value = p.mediaType || p.media_type || 'photo';
-  document.getElementById('fType').value      = p.post_type || p.type || 'all';
-  document.getElementById('fLabel').value     = p.label || '';
-  document.getElementById('fUsername').value  = p.username || '';
-  document.getElementById('fPostUrl').value   = p.post_url || p.postUrl || '';
-  document.getElementById('fTime').value      = (p.time || p.post_time || '').slice(0,16);
-  document.getElementById('fLikes').value     = p.likes || '';
-  document.getElementById('fComments').value  = p.comments || '';
-  document.getElementById('fShares').value    = p.shares || '';
-  const r = getRequired(p);
-  setRequiredFields(r);
-  resetImagePicker(p.image || p.image_url || null);
-  setFocusUI(p.focused || false);
-  renderPreview();
-  document.getElementById('postModal').style.display = 'flex';
-  lockScroll();
-}
-function closePostModal() { document.getElementById('postModal').style.display = 'none'; editingId = null; unlockScroll(); }
-
-function openBulkAddModal() {
-  document.getElementById('bPlatform').value  = 'ig';
-  document.getElementById('bMediaType').value = 'photo';
-  document.getElementById('bType').value      = 'all';
-  document.getElementById('bLinks').value     = '';
-  document.getElementById('bReqLike').checked    = true;
-  document.getElementById('bReqComment').checked = true;
-  document.getElementById('bReqShare').checked   = true;
-  document.getElementById('bReqSave').checked    = true;
-  document.getElementById('bulkAddModal').style.display = 'flex';
-  lockScroll();
-}
-function closeBulkAddModal() { document.getElementById('bulkAddModal').style.display = 'none'; unlockScroll(); }
-
-function submitBulkAdd() {
-  const raw = document.getElementById('bLinks').value;
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  if (!lines.length) { showToast('Paste at least one link first'); return; }
-
-  const platform  = document.getElementById('bPlatform').value;
-  const mediaType = document.getElementById('bMediaType').value;
-  const postType  = document.getElementById('bType').value;
-  const required  = {
-    requireLike:    getRequiredField('bReqLike'),
-    requireComment: getRequiredField('bReqComment'),
-    requireShare:   getRequiredField('bReqShare'),
-    requireSave:    getRequiredField('bReqSave'),
-  };
-
-  const now = new Date().toISOString();
-  let added = 0;
-  lines.forEach((line, i) => {
-    const parts = line.split('|').map(s => s.trim());
-    const hasUsername = parts.length >= 2 && parts[1];
-    const username = hasUsername ? parts[0].replace(/^@/, '') : '';
-    const url      = hasUsername ? parts[1] : parts[0];
-    if (!url) return;
-
-    const post = {
-      id: 'p_' + Date.now() + '_' + i,
-      platform, mediaType,
-      post_type: postType, type: postType,
-      label: '', username,
-      post_url: url,
-      time: now,
-      likes: 0, comments: 0, shares: 0,
-      ...required,
-      image: null, image_url: null,
-      focused: false,
-      createdAt: now, created_at: now,
-    };
-    posts.push(post);
-    added++;
-  });
-
-  if (!added) { showToast('No valid links found'); return; }
-  saveToScript();
-  renderPosts();
-  closeBulkAddModal();
-  showToast(`Added ${added} post${added > 1 ? 's' : ''}`);
-}
-function openDeleteModal(id) { deletingId = id; document.getElementById('deleteModal').style.display = 'flex'; lockScroll(); }
-function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; deletingId = null; unlockScroll(); }
-function confirmDelete() {
-  const idToDelete = deletingId;
-  posts = posts.filter(p => p.id !== idToDelete);
-  deletePostFromScript(idToDelete);
-  renderPosts(); closeDeleteModal(); showToast('Post deleted');
-}
-function savePost() {
-  const now = new Date().toISOString();
-  const record = {
-    platform:       document.getElementById('fPlatform').value,
-    mediaType:      document.getElementById('fMediaType').value,
-    post_type:      document.getElementById('fType').value,
-    type:           document.getElementById('fType').value,
-    label:          document.getElementById('fLabel').value.trim(),
-    username:       document.getElementById('fUsername').value.trim().replace(/^@/, '') || '',
-    post_url:       document.getElementById('fPostUrl').value.trim(),
-    time:           document.getElementById('fTime').value,
-    likes:          parseInt(document.getElementById('fLikes').value) || 0,
-    comments:       parseInt(document.getElementById('fComments').value) || 0,
-    shares:         parseInt(document.getElementById('fShares').value) || 0,
-    requireLike:    getRequiredField('fReqLike'),
-    requireComment: getRequiredField('fReqComment'),
-    requireShare:   getRequiredField('fReqShare'),
-    requireSave:    getRequiredField('fReqSave'),
-    image:          selectedImageData || null,
-    image_url:      selectedImageData || null,
-    focused:        isFocused,
-  };
-
-  let savedPost;
-  if (editingId) {
-    const idx = posts.findIndex(p => p.id === editingId);
-    if (idx >= 0) { posts[idx] = { ...posts[idx], ...record }; savedPost = posts[idx]; }
-    showToast('Post updated');
-  } else {
-    savedPost = { id: 'p_' + Date.now(), ...record, createdAt: now, created_at: now };
-    posts.push(savedPost);
-    showToast('Post added');
-  }
-  if (savedPost) upsertPostToScript(savedPost);
-  else saveToScript();
-  renderPosts(); closePostModal();
-}
-
-async function enterAdmin() {
-  document.getElementById('publicView').style.display = 'none';
-  document.getElementById('adminView').style.display  = 'block';
-  window.scrollTo(0, 0);
-  loadLocalData();
-  const inp = document.getElementById('adminUsernameInput');
-  if (inp) { inp.value = currentUsername; updateUsernamePreview(currentUsername); }
-  renderPosts();
-}
-function exitAdmin() {
-  document.getElementById('adminView').style.display  = 'none';
-  document.getElementById('publicView').style.display = 'block';
-  const url = new URL(location.href);
-  url.searchParams.delete('admin');
-  history.replaceState(null, '', url.toString());
-  generatePosts();
-  window.scrollTo(0, 0);
-}
-
-// ─── Boot ────────────────────────────────────────────────────────────────────
-const ADMIN_SECRET = 'pradamilan';
-(function boot() {
-  const params = new URLSearchParams(location.search);
-  if (params.get('admin')?.trim().toLowerCase() === ADMIN_SECRET) {
-    const url = new URL(location.href);
-    url.searchParams.delete('admin');
-    history.replaceState(null, '', url.toString());
-    enterAdmin();
-  } else {
-    loadFromScript();
-  }
-})();
-</script>
+    function copyAllHashtags() {
+      copyText(HASHTAGS).then(function() {
+        var btn = document.querySelector('.copy-all-btn');
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(function() { btn.textContent = orig; }, 1800);
+      });
+    }
+  </script>
 </body>
 </html>
